@@ -1,0 +1,39 @@
+<Domain xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="Relationship">
+    <Attribute id="relationship_name" type="str" name="relationship name"/>
+    <Attribute id="annotation" type="text" name="annotation"/>
+    <Attribute id="properties" type="list" name="properties">
+		<Domain>
+			<Attribute id="name" type="str" name="name" />
+			<Attribute id="type" type="str" name="type" />
+			<Attribute id="annotation" type="text" name="annotation"/>
+		</Domain>
+	</Attribute>
+	<Attribute id="sourceRole"  name="sourceRole" >
+		<Domain>
+			<Attribute id="minCount" type="enum" name="minCount" default="1">
+				<Enum>0</Enum>
+				<Enum>1</Enum>
+				<Enum>*</Enum>
+			</Attribute>
+			<Attribute id="maxCount" type="enum" name="maxCount" default="1">
+				<Enum>0</Enum>
+				<Enum>1</Enum>
+				<Enum>*</Enum>
+			</Attribute>
+		</Domain>
+	</Attribute>
+	<Attribute id="targetRole" name="targetRole"  >
+		<Domain>
+			<Attribute id="minCount" type="enum" name="minCount" default="1">
+				<Enum>0</Enum>
+				<Enum>1</Enum>
+				<Enum>*</Enum>
+			</Attribute>
+			<Attribute id="maxCount" type="enum" name="maxCount" default="1">
+				<Enum>0</Enum>
+				<Enum>1</Enum>
+				<Enum>*</Enum>
+			</Attribute>
+		</Domain>
+	</Attribute>
+</Domain>
