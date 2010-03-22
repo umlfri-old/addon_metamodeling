@@ -1,5 +1,6 @@
 <Domain xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="Relationship">
-    <Attribute id="relationship_name" type="str" name="relationship name"/>
+    <Attribute id="relationship_name" type="str" name="relationship name" default="Rel01"/>
+    <Attribute id="visual_identity" type="str" name="visual_identity" default="Rel01"/>
     <Attribute id="annotation" type="text" name="annotation"/>
     <Attribute id="properties" type="list" name="properties">
 		<Domain>

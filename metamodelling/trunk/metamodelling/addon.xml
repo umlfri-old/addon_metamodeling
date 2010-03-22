@@ -3,7 +3,7 @@
 	<Identity uri="urn:umlfri.org:metamodel:metamodelling"/>
 	<FriendlyName name="Metamodelling" version="0.0.1b"/>
 	<Author>
-		<Name name="Michal Kováčik - UML .FRI team"/>
+		<Name name="Michal Kováčik"/>
 		<Homepage url="http://umlfri.org"/>
 		<CommonLicense name="GPL-2"/>
 	</Author>
