@@ -1,0 +1,1 @@
+ipython -gthread EditWindow.py

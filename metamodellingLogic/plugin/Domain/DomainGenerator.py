@@ -14,25 +14,26 @@ addonPath = "share/addons/"
 OBJ_IDENTITY = "object_name"
 
 class DomainGenerator(object):
-    def __init__(self,project):
+    def __init__(self,pluginobj,project):
         self.project = project
-        print 'objekt je na svete'
+        self.projectname = pluginobj.projectname
         
     def GenerateDomains(self):
         if (not self.ValidateDomains()):
             return
-        self.GenerateDirectories("miso")
-        for diag in self.project.GetRoot().GetDiagrams():     
+        self.GenerateDirectories(self.projectname)
+        for diag in self.project.GetRoot().GetDiagrams(): 
+            GraphGenerator.GenerateGraph(self.projectname,diag)    
             for i in range(0,len(diag.GetElements())):
-                ObjectGenerator.GenerateObject(diag.GetElements()[i])
+                ObjectGenerator.GenerateObject(self.projectname,diag.GetElements()[i])
             for i in range(0,len(diag.GetConnections())):
-                RelationshipGenerator.GenerateRelationship(diag.GetConnections()[i]) 
+                RelationshipGenerator.GenerateRelationship(self.projectname,diag.GetConnections()[i]) 
           
     def ValidateDomains(self):
         for diag in self.project.GetRoot().GetDiagrams():
             if (len(diag.GetElements())==0):
                 #tu by mala byt hlaska o tom, ze nemame co generovat
-                print 'idz v ric'
+                WarningDialog("Niektory z diagramov je prazdny, upravte ho prosim.")
                 return False
             print len(diag.GetElements())
             #validacia porovnanim, ci mame pre domenu iba jednu definiciu a ostatne pripadne rovnako nazvane elementy su iba zastupcovia
@@ -43,13 +44,11 @@ class DomainGenerator(object):
         return True 
     
     def GenerateDirectories(self,projectname):
-        #zatial testovacie
         try:
             basicPath = addonPath+projectname
             metaPath = basicPath+"/metamodel"
             print "test Generate directories"
-            print os.path.isdir(basicPath)
-            print "kovo"
+
             if (not os.path.isdir(basicPath)):
                 io.os.mkdir(basicPath)
             if (not os.path.isdir(basicPath+"/icons")):    

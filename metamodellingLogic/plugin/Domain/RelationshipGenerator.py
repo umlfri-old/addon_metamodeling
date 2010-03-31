@@ -22,7 +22,7 @@ XML_HEAD = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 
 class RelationshipGenerator(object):
        
-    def GenerateRelationship(obj):
+    def GenerateRelationship(projectname,obj):
         
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
@@ -42,7 +42,7 @@ class RelationshipGenerator(object):
             object.append(newatt)
         
         print(tostring(object,encoding=None,method="xml",pretty_print=True))
-        f = open(addonPath+"miso/metamodel/domains/"+identity+".xml","w");
+        f = open(addonPath+projectname+"/metamodel/domains/"+identity+".xml","w");
         f.write(XML_HEAD)
         f.writelines(tostring(object,encoding=None,method="xml",pretty_print=True))
         f.close()
