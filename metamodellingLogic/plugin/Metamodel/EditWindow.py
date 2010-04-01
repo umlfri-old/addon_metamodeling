@@ -57,30 +57,48 @@ class ContextMenu(gtk.Menu):
 class EditWindow(object):
     def __init__(self,selected,project):
         self.TARGETS = [
-        ('MY_TREE_MODEL_ROW', gtk.TARGET_SAME_WIDGET, 0),
+        ('object', gtk.TARGET_SAME_WIDGET, 0),
         ('text/plain', 0, 1),
         ('TEXT', 0, 2),
         ('STRING', 0, 3),
         ]
-        self.__ConstructBasicLayout()
         
+        self.__ConstructBasicLayout()
+         
         self.treestore = gtk.TreeStore(str,object)
         self.tmpModel = gtk.ListStore(str,str)
         
         parent = self.treestore.append(None)
         self.treestore.set(parent,0,"Appearance",1,None)
         quex = self.treestore.append(parent)
-        item = AppearanceFactory.CreateElement('Ellipse')
-        self.treestore.set(quex,0,item.Identity(),1,item)
-        quex1 = self.treestore.append(parent)
-        item1 = AppearanceFactory.CreateElement('Rectangle')
-        self.treestore.set(quex1,0,item1.Identity(),1,item1)
+#        item = AppearanceFactory.CreateElement('Ellipse')
+#        self.treestore.set(quex,0,item.Identity(),1,item)
+#        quex1 = self.treestore.append(parent)
+#        item1 = AppearanceFactory.CreateElement('Rectangle')
+#        self.treestore.set(quex1,0,item1.Identity(),1,item1)
+#        
+#        quex2 = self.treestore.append(quex1)
+#        item2 = AppearanceFactory.CreateElement('Rectangle')
+#        self.treestore.set(quex2,0,item2.Identity(),1,item2)
+
+        self.__ConstructLeftTW()
         
-        quex2 = self.treestore.append(quex1)
-        item2 = AppearanceFactory.CreateElement('Rectangle')
-        self.treestore.set(quex2,0,item2.Identity(),1,item2)
-
-
+        self.__ConstructCanvas()
+         
+        self.__ConstructRightTW()
+        
+        self.window.show_all()
+        gtk.main()
+        
+    def __ConstructBasicLayout(self):
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.set_title("Metamodel Editor")
+        self.window.set_size_request(800,600)
+            
+        self.hbox = gtk.HBox() 
+        self.window.add(self.hbox)    
+        
+    def __ConstructLeftTW(self):
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
@@ -96,11 +114,10 @@ class EditWindow(object):
         self.treeview.connect("drag_data_get", self.drag_data_get_data)
         self.treeview.connect("drag_data_received",
                               self.drag_data_received_data)
-        #self.treeview.connect("selection")
+
         self.treeview.connect('cursor-changed', self.on_cursor_changed)
-        #self.treeview.connect('cursor-changed', self.on_button_press_event, self.treeview.eventButton)
+
         self.treeview.connect("button_press_event", self.on_button_press_event)
-        #self.treeview.connect("button_press_event", self.test)
 
         self.tvcolumn = gtk.TreeViewColumn('Structure of layout')
         self.treeview.append_column(self.tvcolumn)
@@ -108,36 +125,42 @@ class EditWindow(object):
         self.tvcolumn.pack_start(self.cell, True)
         self.tvcolumn.add_attribute(self.cell, "text", 0)
                
-        self.hbox.pack_start(self.treeview)
+        self.hbox.pack_start(self.treeview)     
         
+    def __ConstructCanvas(self):
+        #canvas for previews
         self.canvas = gtk.DrawingArea()
+        self.canvas.set_size_request(400,600)
+       
+
         self.hbox.pack_start(self.canvas)
         
+    def PaintSelf(self):
+        print 'ca'
+        print self.canvas
+        canvasarea = self.canvas.window
+        
+        self.gc = canvasarea.new_gc(foreground=None, background=None, font=None, 
+                     function=-1, fill=-1, tile=None,
+                     stipple=None, clip_mask=None, subwindow_mode=-1,
+                     ts_x_origin=-1, ts_y_origin=-1, clip_x_origin=-1,
+                     clip_y_origin=-1, graphics_exposures=-1,
+                     line_width=-1, line_style=-1, cap_style=-1,
+                     join_style=-1)
+        
+        
+#        canvasarea.draw_line(self.gc, 0, 0, 100, 100)
+#        canvasarea.draw_rectangle(self.gc, True, 200-50, 300-80, 200+50, 300+80)
+        rect = CRectangle()
+        rect.Paint(self.gc)
+        
+    def __ConstructRightTW(self):
         self.twProperties = gtk.TreeView()
-        self.hbox.pack_end(self.twProperties)
-        
-        
-        self.window.show_all()
-        gtk.main()
-        
-    def __ConstructBasicLayout(self):
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title("Metamodel Editor")
-        self.window.set_size_request(600,480)
-            
-        self.hbox = gtk.HBox() 
-        self.window.add(self.hbox)     
+        self.hbox.pack_end(self.twProperties)    
         
     def on_button_press_event(self, widget, event):
-        if (event is None): return
-        """
-        if event.button == 1 and event.type == gtk.gdk.BUTTON_PRESS:
-            ret = self.GetSelectedItem(widget)
-            if (ret is not None):
-                self.SetPropertiesModel(ret)
-        """        
+        if (event is None): return       
         if event.button == 3 and event.type == gtk.gdk.BUTTON_PRESS:
-            print self.GetSelectedItem(widget)
             c = ContextMenu(self)
             c.popup(None, None, None, event.button, event.get_time())
             
@@ -151,8 +174,10 @@ class EditWindow(object):
         print "Treeview Cursor changed"
 
         ret = self.GetSelectedItem(treeview)
-        if (ret is not None):
-            self.SetPropertiesModel(ret)
+        #if (ret is not None):
+        self.SetPropertiesModel(ret)  
+        
+        self.PaintSelf()  
         
         s = treeview.get_selection()
         (ls, iter) = s.get_selected()
@@ -173,8 +198,8 @@ class EditWindow(object):
             return entry
      
     def SetPropertiesModel(self, source):
-        if (source is not None):
-            self.tmpModel.clear()
+        self.tmpModel.clear()
+        if (source is not None): 
             attr = source.GetAttributes().items()
             for it in attr:
                 print it
@@ -211,38 +236,64 @@ class EditWindow(object):
         
         #teraz setnem hodnotu aj do backend objektu
         self.GetSelectedItem(self.treeview).GetAttributes()[liststore[path][0]]=new_text
-        return
     
     def drag_data_get_data(self, treeview, context, selection, target_id,
                            etime):
         treeselection = treeview.get_selection()
         model, iter = treeselection.get_selected()
         data = model.get_value(iter, 0)
-        selection.set(selection.target, 8, data)
-
-    def drag_data_received_data(self, treeview, context, x, y, selection,
-                                info, etime):
-        model = treeview.get_model()
-        data = selection.data
-        print "Data"
-        print data
-        drop_info = treeview.get_dest_row_at_pos(x, y)
-        if drop_info:
-            path, position = drop_info
-            iter = model.get_iter(path)
-            print "Iter"
-            print iter
-            if (position == gtk.TREE_VIEW_DROP_BEFORE
-                or position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE):
-                model.insert_before(iter, [data])
+        selection.set(selection.target,8,data)
+    
+    def drag_data_received_data(self, widget, context, x, y, selection, info, etime):
+        if widget.get_dest_row_at_pos(x, y) is not None:
+            path, pos = widget.get_dest_row_at_pos(x, y)
+            model, iter_to_copy = widget.get_selection().get_selected()
+            target_iter = model.get_iter(path)
+                       
+            if self.CheckSanity(model, iter_to_copy, target_iter):
+                self.IterCopy(widget, model, iter_to_copy, target_iter, pos)
+                context.finish(True, True, etime)
             else:
-                model.insert_after(iter, [data])
+                context.finish(False, False, etime) 
+                
+    def CheckSanity(self, model, iter_to_copy, target_iter):
+        path_of_iter_to_copy = model.get_path(iter_to_copy)
+        path_of_target_iter = model.get_path(target_iter)
+        if path_of_target_iter[0:len(path_of_iter_to_copy)] == path_of_iter_to_copy:
+            return False
+        elif len(path_of_target_iter) < 2:
+            return False
         else:
-            model.append([data])
-        if context.action == gtk.gdk.ACTION_MOVE:
-            context.finish(True, True, etime)
-        return
+            return True
+    
+    def IterCopy(self, treeview, model, iter_to_copy, target_iter, pos):
+        new_pos_str=(model.get_string_from_iter(target_iter)).split(':')
+        old_pos_str=(model.get_string_from_iter(iter_to_copy)).split(':')
+        new_el_pos=int(new_pos_str[len(new_pos_str)-1])
+        old_el_pos=int(old_pos_str[len(old_pos_str)-1])
+        
+        node_to_copy = treeview.get_model().get(iter_to_copy,1)[0]
+        
+        target_node = treeview.get_model().get(target_iter,1)[0]
+        
+        if (pos == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE) or (pos == gtk.TREE_VIEW_DROP_INTO_OR_AFTER):
+            new_iter = model.append(target_iter)
+        
+        elif pos == gtk.TREE_VIEW_DROP_BEFORE:
+            new_iter = model.insert_before(None, target_iter)
+        
+        elif pos == gtk.TREE_VIEW_DROP_AFTER:
+            new_iter = model.insert_after(None, target_iter)
+                    
+        for i in range(2):
+            model.set_value(new_iter, i, model.get_value(iter_to_copy, i))
+              
+        if model.iter_has_child(iter_to_copy):
+            for i in range(0, model.iter_n_children(iter_to_copy)):
+                next_iter_to_copy = model.iter_nth_child(iter_to_copy, i)
+                self.IterCopy(treeview, model, next_iter_to_copy, new_iter, gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)
      
+        model.remove(iter_to_copy)
         
 if __name__ == '__main__':
     a=EditWindow('','')

@@ -23,10 +23,10 @@ class MetamodelManager(object):
         self.metamodels = dict()
         
     def ShowEditWindow(self,selected,project):
-        if (selected is not None):
+        #if (selected is not None):
             #tu potom pridat ze ak uz pre takuto vizualnu reprezentaciu mame v 
             #self.metamodels 
-            EditWindow(selected,project)
+        EditWindow(selected,project)
     
     def GenerateMetamodels(self):
         pass

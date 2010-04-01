@@ -61,7 +61,7 @@ class Plugin(object):
     #if there is more than one item selected, fail
     def __GetSelectedItem(self):
         
-        if (self.interface.GetAdapter().GetCurrentDiagram().GetSelected().size == 1):
+        if (len(self.interface.GetAdapter().GetCurrentDiagram().GetSelected()) == 1):
             return self.interface.GetAdapter().GetCurrentDiagram().GetSelected()[0]
         else:
             WarningDialog("Choose ONE object or relationship")
