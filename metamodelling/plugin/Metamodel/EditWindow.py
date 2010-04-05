@@ -5,9 +5,21 @@ Created on 28.3.2010
 '''
 import os
 from __init__ import *
+from lib.Domains.Type import * 
+from lib.Domains.Object import *
+from lib.Elements.Type import *
+from lib.Elements.Object import *
+from lib.Drawing.Objects import ALL
+from lib.Drawing.Context import BuildParam
+from lib.Drawing.Element import *
+from lib.Drawing.Canvas.Cairo import *
+
+from AppearanceGenerator import *
 import pygtk
 from symbol import for_stmt
 pygtk.require('2.0')
+
+
 
 try:
     import gtk
@@ -56,6 +68,9 @@ class ContextMenu(gtk.Menu):
 
 class EditWindow(object):
     def __init__(self,selected,project):
+        self.selected = selected
+        self.project = project
+        
         self.TARGETS = [
         ('object', gtk.TARGET_SAME_WIDGET, 0),
         ('text/plain', 0, 1),
@@ -71,15 +86,15 @@ class EditWindow(object):
         parent = self.treestore.append(None)
         self.treestore.set(parent,0,"Appearance",1,None)
         quex = self.treestore.append(parent)
-#        item = AppearanceFactory.CreateElement('Ellipse')
-#        self.treestore.set(quex,0,item.Identity(),1,item)
-#        quex1 = self.treestore.append(parent)
-#        item1 = AppearanceFactory.CreateElement('Rectangle')
-#        self.treestore.set(quex1,0,item1.Identity(),1,item1)
-#        
-#        quex2 = self.treestore.append(quex1)
-#        item2 = AppearanceFactory.CreateElement('Rectangle')
-#        self.treestore.set(quex2,0,item2.Identity(),1,item2)
+        item = AppearanceFactory.CreateElement('Ellipse')
+        self.treestore.set(quex,0,item.Identity(),1,item)
+        quex1 = self.treestore.append(parent)
+        item1 = AppearanceFactory.CreateElement('Rectangle')
+        self.treestore.set(quex1,0,item1.Identity(),1,item1)
+        
+        quex2 = self.treestore.append(quex1)
+        item2 = AppearanceFactory.CreateElement('Rectangle')
+        self.treestore.set(quex2,0,item2.Identity(),1,item2)
 
         self.__ConstructLeftTW()
         
@@ -136,23 +151,66 @@ class EditWindow(object):
         self.hbox.pack_start(self.canvas)
         
     def PaintSelf(self):
-        print 'ca'
-        print self.canvas
+
         canvasarea = self.canvas.window
-        
+        """
         self.gc = canvasarea.new_gc(foreground=None, background=None, font=None, 
-                     function=-1, fill=-1, tile=None,
+                     function=-1, fill=-1, title=None,
                      stipple=None, clip_mask=None, subwindow_mode=-1,
                      ts_x_origin=-1, ts_y_origin=-1, clip_x_origin=-1,
                      clip_y_origin=-1, graphics_exposures=-1,
                      line_width=-1, line_style=-1, cap_style=-1,
                      join_style=-1)
+        """
+        #self.gc = CDrawingContext(self.canvas,self.selected,(0,0))
         
+        self.domaintype = CDomainType("bulk",None)
+        print self.domaintype
+        
+        self.domainObject = CDomainObject(self.domaintype)
+        
+        self.elementtype = CElementType(None,"bulkitem")
+        self.elementtype.SetAppearance(self.DummyF(self.FakeEllipse()))
+        self.elementtype.SetDomain(self.domaintype)
+        
+        self.elementobject = CElementObject(self.elementtype)
+        
+        self.element = CElement(None, self.elementobject)
+        
+        self.cairo = CCairoCanvas(self.canvas)
+        #self.gc = CDrawingContext(self.canvas,self.element,(0,0))
+        self.element.Paint(self.cairo)
         
 #        canvasarea.draw_line(self.gc, 0, 0, 100, 100)
 #        canvasarea.draw_rectangle(self.gc, True, 200-50, 300-80, 200+50, 300+80)
-        rect = CRectangle()
-        rect.Paint(self.gc)
+        
+#        rect = CRectangle()
+#        rect = CEllipse()
+#        rect.Paint(self.gc)
+
+#        print dir(self.selected)
+#        print self.selected.Meta.GetMethod(self.selected.__class__,'Paint')
+#        self.selected.Meta.GetMethod('lib.Addons.Plugin.Interface.meta.IVisualElement','Paint')(self.gc)
+#        self.selected.Paint(self.gc,delta=(-10,-10))
+    def FakeEllipse(self):
+        return AppearanceGenerator.DummyObject()
+        
+    def DummyF(self,root):
+        #toto je ako __LoadAppearance
+        if root.tag.split("}")[1] not in ALL:
+            raise FactoryError("XMLError", root.tag)
+        cls = ALL[root.tag.split("}")[1]]
+        params = {}
+        for attr in root.attrib.items():    #return e.g. attr == ('id', '1') => attr[0] == 'id', attr[1] == '1'
+            params[attr[0]] = BuildParam(attr[1], cls.types.get(attr[0], None))
+        obj = cls(**params)
+        if hasattr(obj, "LoadXml"):
+            obj.LoadXml(root)
+        else:
+            for child in root:
+                obj.AppendChild(self.__LoadAppearance(child))
+        return obj
+    
         
     def __ConstructRightTW(self):
         self.twProperties = gtk.TreeView()
