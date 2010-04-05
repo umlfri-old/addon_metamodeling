@@ -42,13 +42,15 @@ class CRectangle(CSimpleContainer):
         return True, True
 
     def Paint(self, context):
-        paths = context.GetMetamodel().GetPathFactory()
+        #paths = context.GetMetamodel().GetPathFactory()
         size = context.ComputeSize(self)
         shadowcolor = context.GetShadowColor()
         if shadowcolor is None:
-            border, fill = self.GetVariables(context, 'border', 'fill')
+            #border, fill = self.GetVariables(context, 'border', 'fill')
+            border, fill = black,black
         else:
-            border, fill = None, shadowcolor
+            #border, fill = None, shadowcolor
+            border, fill = black, black
         
         corners = []
         for i, c in enumerate(self.GetVariables(context, 'lefttop', 'righttop', 'rightbottom', 'leftbottom')):

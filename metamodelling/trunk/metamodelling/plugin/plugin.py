@@ -12,6 +12,7 @@ import gtk
 class Plugin(object):
     def __init__(self,interface):
         self.interface = interface
+        self.interface.SetGtkMainloop()
         self.projectname = None
         #metamanager is only one, it is a singleton
         self.metamanager = MetamodelManager()
@@ -21,7 +22,7 @@ class Plugin(object):
         except PluginInvalidParameter:
             pass
         self.interface.AddMenu('MenuItem', 'mnuMenubar/metamodelling', ''.join(chr(random.randint(97,125))for i in xrange(6)), self.GenerateDomain, text = 'Generate domain')
-        self.interface.AddMenu('MenuItem', 'mnuMenubar/metamodelling', ''.join(chr(random.randint(97,125))for i in xrange(6)), self.SetProjectName, text = 'Set project name')
+        self.interface.AddMenu('MenuItem', 'mnuMenubar/metamodelling', ''.join(chr(random.randint(97,125))for i in xrange(6)), self.SetVisualIdentity, text = 'Set visual identity')
     
     def GenerateDomain(self,*args):
         actProject = self.interface.GetAdapter().GetProject()
@@ -44,23 +45,20 @@ class Plugin(object):
     def Validate(self):
         return True
     
-    def SetProjectName(self,*args):
-        #print self.projectname
-        #WarningDialog("Neimplementovane")
+    def SetVisualIdentity(self,*args):
         actProject = self.interface.GetAdapter().GetProject()
         if (actProject is not None):
             self.projectname = self.__GetProjectName()
         else:
             return
-        
-        self.metamanager.ShowEditWindow(self.__GetSelectedItem(),actProject)
+        selItem = self.__GetSelectedItem()
+        if (selItem is not None): self.metamanager.ShowEditWindow(self.__GetSelectedItem(),actProject)
         
     def __GetProjectName(self):
         return self.interface.GetAdapter().GetProject().GetRoot().GetName()  
     
     #if there is more than one item selected, fail
-    def __GetSelectedItem(self):
-        
+    def __GetSelectedItem(self):  
         if (len(self.interface.GetAdapter().GetCurrentDiagram().GetSelected()) == 1):
             return self.interface.GetAdapter().GetCurrentDiagram().GetSelected()[0]
         else:

@@ -17,14 +17,14 @@ class WarningDialog(gtk.Dialog):
     def __init__(self,message): 
         super(WarningDialog, self).__init__("UML .FRI Warning")
         self.set_size_request(200,100)
-        self.connect("delete_event", lambda w,e: gtk.main_quit())
+        self.connect("delete_event", lambda w,e: self.hide())
         
         label = gtk.Label(message)
         self.vbox.pack_start(label,True,True,0)
         label.show()
         
         button = gtk.Button(stock=gtk.STOCK_CLOSE)
-        button.connect("clicked", lambda w: gtk.main_quit())
+        button.connect("clicked", lambda w: self.hide())
         self.vbox.pack_start(button, True, True, 0)
         button.show()
         

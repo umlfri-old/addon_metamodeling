@@ -5,7 +5,8 @@ class CDrawingContext(object):
         self.canvas = canvas
         self.element = element
         self.pos = pos
-        self.size = size
+        #self.size = size
+        self.size = (100,100)
         self.variables = {}
         self.stack = []
         self.shadowcolor = None
@@ -30,7 +31,8 @@ class CDrawingContext(object):
         return self.size
     
     def GetCachedSize(self, object):
-        return self.element.GetCachedSize(self, object)
+        #return self.element.GetCachedSize(self, object)
+        return self.size
     
     def GetPos(self):
         return self.pos
