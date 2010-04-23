@@ -16,7 +16,7 @@ except:
 class WarningDialog(gtk.Dialog):
     def __init__(self,message): 
         super(WarningDialog, self).__init__("UML .FRI Warning")
-        self.set_size_request(200,100)
+        self.set_size_request(350,130)
         self.connect("delete_event", lambda w,e: self.hide())
         
         label = gtk.Label(message)

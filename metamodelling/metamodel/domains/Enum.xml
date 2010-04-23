@@ -1,0 +1,17 @@
+<Domain id="Enum" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" >
+    <Attribute id="enum_name" name="enum name" >
+			<Str default="enum01"/>
+    </Attribute>
+    <Attribute id="values" name="values">
+		<List>
+			<Domain>
+				<Attribute id="value" name="value" >
+					<Str/>
+				</Attribute>
+			</Domain>
+		</List>
+	</Attribute>	
+	<Attribute id="note" name="Note" >
+		<Text/>
+	</Attribute>
+</Domain>

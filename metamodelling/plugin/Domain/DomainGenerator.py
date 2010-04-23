@@ -3,9 +3,8 @@ Created on 21.3.2010
 
 @author: Michal Kovacik
 '''
-#from lib.Addons.Plugin.Interface import IDiagram
 from lib.Exceptions import *
-import random
+#import random
 from __init__ import *
 import io
 import os.path
@@ -18,32 +17,36 @@ class DomainGenerator(object):
         self.project = project
         self.projectname = pluginobj.projectname
         
-    def GenerateDomains(self):
+    def GenerateDomains(self,zipfile=None):
         if (not self.ValidateDomains()):
             return
-        self.GenerateDirectories(self.projectname)
+        if not zipfile: self.__GenerateDirectories(self.projectname)
         for diag in self.project.GetRoot().GetDiagrams(): 
-            GraphGenerator.GenerateGraph(self.projectname,diag)    
+            GraphGenerator.GenerateGraph(self.projectname,diag,zipfile)    
             for i in range(0,len(diag.GetElements())):
-                ObjectGenerator.GenerateObject(self.projectname,diag.GetElements()[i])
+                if (diag.GetElements()[i].GetObject().GetType()=="Object"):
+                    ObjectGenerator.GenerateObject(self.projectname,self.project,diag.GetElements()[i],zipfile)
             for i in range(0,len(diag.GetConnections())):
-                RelationshipGenerator.GenerateRelationship(self.projectname,diag.GetConnections()[i]) 
+                if (diag.GetConnections()[i].GetObject().GetType()=="Relationship"):
+                    ObjectGenerator.GenerateObject(self.projectname,self.project,diag.GetConnections()[i],zipfile)
+                #RelationshipGenerator.GenerateRelationship(self.projectname,diag.GetConnections()[i],zipfile) 
           
     def ValidateDomains(self):
         for diag in self.project.GetRoot().GetDiagrams():
             if (len(diag.GetElements())==0):
                 #tu by mala byt hlaska o tom, ze nemame co generovat
-                WarningDialog("Niektory z diagramov je prazdny, upravte ho prosim.")
+                WarningDialog("Some diagram is empty. Each one requires at least one Object.")
                 return False
-            print len(diag.GetElements())
             #validacia porovnanim, ci mame pre domenu iba jednu definiciu a ostatne pripadne rovnako nazvane elementy su iba zastupcovia
             for el in diag.GetElements():
-                el.GetObject().GetValue(OBJ_IDENTITY)
-                #TU POKRACUJ
+                #print el.GetObject().GetType()=="Object"
+                if (el.GetObject().GetType()=="Object"):
+                    el.GetObject().GetValue(OBJ_IDENTITY)
+                    #TU POKRACUJ
                 
         return True 
     
-    def GenerateDirectories(self,projectname):
+    def __GenerateDirectories(self,projectname):
         try:
             basicPath = addonPath+projectname
             metaPath = basicPath+"/metamodel"
@@ -72,6 +75,6 @@ class DomainGenerator(object):
             return    
         print "Directories were generated successfully"
         
-    def isElementEmpty(self,element):
-        pass    
+    #def isElementEmpty(self,element):
+    #    pass    
         

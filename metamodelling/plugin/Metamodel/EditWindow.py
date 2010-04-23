@@ -5,21 +5,23 @@ Created on 28.3.2010
 '''
 import os
 from __init__ import *
-from lib.Domains.Type import * 
-from lib.Domains.Object import *
-from lib.Elements.Type import *
-from lib.Elements.Object import *
-from lib.Drawing.Objects import ALL
-from lib.Drawing.Context import BuildParam
-from lib.Drawing.Element import *
-from lib.Drawing.Canvas.Cairo import *
 
-from AppearanceGenerator import *
+from Util.DomainType import DomainType
+from Util.ElementType import ElementType
+from Util.ElementObject import ElementObject
+from Util.ConnectionObject import ConnectionObject
+
+from const import ELEMENT_HINTS,CONNECTION_HINTS
+
+from AppearanceGenerator import AppearanceGenerator
+from Util.Element import Element
+from Util.Connection import Connection
+from Util.Cairo.CairoCanvas import CairoCanvas
 import pygtk
 from symbol import for_stmt
 pygtk.require('2.0')
 
-
+VISUAL_IDENTITY = "visual_identity"
 
 try:
     import gtk
@@ -36,22 +38,34 @@ class ContextMenu(gtk.Menu):
         self.addmenuitem = gtk.MenuItem("Add")
         
         submenuadd = gtk.Menu()
-        for mit in self.__GetSubMenuItems():
-            menu_items = gtk.MenuItem(mit)         
-            menu_items.connect("activate", self.add, mit)
-            menu_items.show()
-            submenuadd.append(menu_items)      
         
-        self.addmenuitem.set_submenu(submenuadd)
-        self.show()
+        if (self.t.treeview.get_selection().get_selected()[1]==None):
+            selection = self.__GetSubMenuItems()
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="Svg"):
+            selection = self.__GetSvgItems()   
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="g"):
+            selection = self.__GetSvgItems()  
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="path"):
+            selection = None  
+        else:  selection = self.__GetSubMenuItems()         
         
-        self.addmenuitem.show()
-        self.append(self.addmenuitem)
+        if selection is not None:    
+            for mit in selection:
+                menu_items = gtk.MenuItem(mit)         
+                menu_items.connect("activate", self.add, mit)
+                menu_items.show()
+                submenuadd.append(menu_items)      
+        
+            self.addmenuitem.set_submenu(submenuadd)
+        
+            self.addmenuitem.show()
+            self.append(self.addmenuitem)
         
         self.removeitem = gtk.MenuItem("Remove")
-        self.removeitem.connect("activate", self.menuitem_remove, mit)
+        self.removeitem.connect("activate", self.menuitem_remove, 'Remove')
         self.removeitem.show()
         self.append(self.removeitem)
+        self.show_all()
 
     def add(self,widget,string):
         parent = self.t.treestore.append(self.t.treeview.get_selection().get_selected()[1])
@@ -61,15 +75,104 @@ class ContextMenu(gtk.Menu):
     def __GetSubMenuItems(self):
         return ['Align','Condition','Default','Diamond','Ellipse','HBox','Icon','Line','Loop','Padding','Proportional','Rectangle','Shadow','Sizer','Svg','Switch','TextBox','VBox']
     
+    def __GetSvgItems(self):
+        return ['G','Path']
+    
     def menuitem_remove(self, widget,string):
         item = self.t.treeview.get_selection().get_selected()[1]
         self.t.treestore.remove(item)
 
+class ContextMenuLine(gtk.Menu):
+    def __init__(self, t):
+        gtk.Menu.__init__(self)
+        self.t = t
+        self.addmenuitem = gtk.MenuItem("Add")
+        
+        submenuadd = gtk.Menu()
+        
+        #ak sme v roote
+        if (self.t.treeview.get_selection().get_selected()[1]==None):
+            selection = self.__GetSubMenuItemsRoot()
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="ConnectionLine"):
+            selection = ""
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="ConnectionArrow"):
+            selection = ""  
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="Condition"):
+            selection = self.__GetSubMenuLineSpecial()   
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="Loop"):
+            selection = self.__GetSubMenuLineSpecial()  
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="Switch"):
+            selection = eval("['Case']")     
+        elif (self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],0)=="Case"):
+            selection = self.__GetSubMenuLineSpecial()         
+        else: selection = self.__GetSubMenuItems()  
+                   
+        addrootitems = gtk.MenuItem("Add to Root")
+        submenuaddroot = gtk.Menu()
+        sel_root_items = self.__GetSubMenuItemsRoot()
+        for mit in sel_root_items:
+            menu_items = gtk.MenuItem(mit)         
+            menu_items.connect("activate", self.addRoot, mit)
+            menu_items.show()
+            submenuaddroot.append(menu_items)      
+        
+            addrootitems.set_submenu(submenuaddroot)
+            addrootitems.show()
+            self.append(addrootitems)        
+        
+        #print self.t.treeview.get_model().get_value(self.t.treeview.get_selection().get_selected()[1],1)
+        if selection is not None:
+            for mit in selection:
+                menu_items = gtk.MenuItem(mit)         
+                menu_items.connect("activate", self.add, mit)
+                menu_items.show()
+                submenuadd.append(menu_items)      
+        
+                self.addmenuitem.set_submenu(submenuadd)
+                self.addmenuitem.show()
+                self.append(self.addmenuitem)
+        
+        
+        self.removeitem = gtk.MenuItem("Remove")
+        self.removeitem.connect("activate", self.menuitem_remove, 'Remove')
+        self.removeitem.show()
+        self.append(self.removeitem)
+        self.show()
+
+    def add(self,widget,string):
+        parent = self.t.treestore.append(self.t.treeview.get_selection().get_selected()[1])
+        item = AppearanceFactory.CreateElement(string)
+        self.t.treestore.set(parent,0,item.Identity(),1,item)
+    
+    def addRoot(self,widget,string):
+        item = AppearanceFactory.CreateElement(string)
+        parent = self.t.treestore.append(None)
+        self.t.treestore.set(parent,0,item.Identity(),1,item)
+        
+    def __GetSubMenuItems(self):
+        return ['Align','Condition','Default','Diamond','Ellipse','HBox','Icon','Line','Loop','Padding','Proportional','Rectangle','Shadow','Sizer','Svg','Switch','TextBox','VBox']
+    
+    def __GetSubMenuItemsRoot(self):
+        return ['Label']+self.__GetSubMenuLineSpecial()
+    
+    def __GetSubMenuLineSpecial(self):
+        return ['ConnectionArrow','ConnectionLine','Condition','Loop','Shadow','Switch']
+    
+    def menuitem_remove(self, widget,string):
+        item = self.t.treeview.get_selection().get_selected()[1]
+        self.t.treestore.remove(item)
 
 class EditWindow(object):
-    def __init__(self,selected,project):
+    def __init__(self,manager,selected,project,type,treestore=None,visual_identity=None):
+        self.manager = manager
         self.selected = selected
         self.project = project
+        self.type = type
+        self.appearanceGenerator = AppearanceGenerator()
+        
+        if visual_identity is not None:
+            self.visual_identity = visual_identity
+        else: self.visual_identity = None
         
         self.TARGETS = [
         ('object', gtk.TARGET_SAME_WIDGET, 0),
@@ -80,21 +183,15 @@ class EditWindow(object):
         
         self.__ConstructBasicLayout()
          
-        self.treestore = gtk.TreeStore(str,object)
+        if treestore is not None:
+            self.treestore = treestore
+        else: 
+            self.treestore = gtk.TreeStore(str,object)
+            if (self.type=="Relationship"):self.__CreateRelationshipBase()
+            
         self.tmpModel = gtk.ListStore(str,str)
-        
-        parent = self.treestore.append(None)
-        self.treestore.set(parent,0,"Appearance",1,None)
-        quex = self.treestore.append(parent)
-        item = AppearanceFactory.CreateElement('Ellipse')
-        self.treestore.set(quex,0,item.Identity(),1,item)
-        quex1 = self.treestore.append(parent)
-        item1 = AppearanceFactory.CreateElement('Rectangle')
-        self.treestore.set(quex1,0,item1.Identity(),1,item1)
-        
-        quex2 = self.treestore.append(quex1)
-        item2 = AppearanceFactory.CreateElement('Rectangle')
-        self.treestore.set(quex2,0,item2.Identity(),1,item2)
+        self.pathsStore = gtk.ListStore(str,str)
+        self.domainsTreeStore = gtk.TreeStore(str,str)
 
         self.__ConstructLeftTW()
         
@@ -102,18 +199,32 @@ class EditWindow(object):
          
         self.__ConstructRightTW()
         
+        self.__ConstructPaths()
+        
+        self.__ConstructDomains()
+        
+        self.__ConstructHints()
+        
+        self.__ConstructButtons()
+        
         self.window.show_all()
         gtk.main()
         
     def __ConstructBasicLayout(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title("Metamodel Editor")
+        self.window.set_title("Metamodel Editor for "+str(self.type))
         self.window.set_size_request(800,600)
-            
-        self.hbox = gtk.HBox() 
-        self.window.add(self.hbox)    
+        self.vbox=gtk.VBox() 
+        self.hbox = gtk.HBox()  
+        self.vbox.add(self.hbox)  
+        self.hboxBottom = gtk.HBox()
+        self.hboxBottom.set_size_request(800,300)
+        
+        self.vbox.add(self.hboxBottom)
+        self.window.add(self.vbox)    
         
     def __ConstructLeftTW(self):
+        leftvbox = gtk.VBox()
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
@@ -136,103 +247,224 @@ class EditWindow(object):
 
         self.tvcolumn = gtk.TreeViewColumn('Structure of layout')
         self.treeview.append_column(self.tvcolumn)
-        self.cell = gtk.CellRendererText()
-        self.tvcolumn.pack_start(self.cell, True)
-        self.tvcolumn.add_attribute(self.cell, "text", 0)
-               
-        self.hbox.pack_start(self.treeview)     
+        cell = gtk.CellRendererText()
+        self.tvcolumn.pack_start(cell, True)
+        self.tvcolumn.add_attribute(cell, "text", 0)
+        
+        leftvbox.pack_start(self.treeview)      
+        self.hbox.pack_start(leftvbox)       
         
     def __ConstructCanvas(self):
         #canvas for previews
         self.canvas = gtk.DrawingArea()
         self.canvas.set_size_request(400,600)
        
-
         self.hbox.pack_start(self.canvas)
         
     def PaintSelf(self):
-
         canvasarea = self.canvas.window
-        """
-        self.gc = canvasarea.new_gc(foreground=None, background=None, font=None, 
-                     function=-1, fill=-1, title=None,
-                     stipple=None, clip_mask=None, subwindow_mode=-1,
-                     ts_x_origin=-1, ts_y_origin=-1, clip_x_origin=-1,
-                     clip_y_origin=-1, graphics_exposures=-1,
-                     line_width=-1, line_style=-1, cap_style=-1,
-                     join_style=-1)
-        """
-        #self.gc = CDrawingContext(self.canvas,self.selected,(0,0))
         
-        self.domaintype = CDomainType("bulk",None)
-        print self.domaintype
+        if (self.type=="Object"):
+            self.appearanceGenerator.SetTreeView(self.treeview.get_model())
+            domaintype = DomainType("bulk")
+            #self.domaintype = self.selected.GetObject().GetDomainType()
+            #domaintype.AppendAttribute("object_name","object_name",type="str",default="kex")
         
-        self.domainObject = CDomainObject(self.domaintype)
-        
-        self.elementtype = CElementType(None,"bulkitem")
-        self.elementtype.SetAppearance(self.DummyF(self.FakeEllipse()))
-        self.elementtype.SetDomain(self.domaintype)
-        
-        self.elementobject = CElementObject(self.elementtype)
-        
-        self.element = CElement(None, self.elementobject)
-        
-        self.cairo = CCairoCanvas(self.canvas)
-        #self.gc = CDrawingContext(self.canvas,self.element,(0,0))
-        self.element.Paint(self.cairo)
-        
-#        canvasarea.draw_line(self.gc, 0, 0, 100, 100)
-#        canvasarea.draw_rectangle(self.gc, True, 200-50, 300-80, 200+50, 300+80)
-        
-#        rect = CRectangle()
-#        rect = CEllipse()
-#        rect.Paint(self.gc)
+            a = FakeFactory()
 
-#        print dir(self.selected)
-#        print self.selected.Meta.GetMethod(self.selected.__class__,'Paint')
-#        self.selected.Meta.GetMethod('lib.Addons.Plugin.Interface.meta.IVisualElement','Paint')(self.gc)
-#        self.selected.Paint(self.gc,delta=(-10,-10))
-    def FakeEllipse(self):
-        return AppearanceGenerator.DummyObject()
+            cairo = CairoCanvas(self.canvas)
+            cairo.Clear()
+            elementtype = ElementType(a)
+            elementtype.SetAppearance(self.appearanceGenerator.DummyObjectAppearance(self.__FakeElement()))
+            elementtype.SetDomain(domaintype)
         
-    def DummyF(self,root):
-        #toto je ako __LoadAppearance
-        if root.tag.split("}")[1] not in ALL:
-            raise FactoryError("XMLError", root.tag)
-        cls = ALL[root.tag.split("}")[1]]
-        params = {}
-        for attr in root.attrib.items():    #return e.g. attr == ('id', '1') => attr[0] == 'id', attr[1] == '1'
-            params[attr[0]] = BuildParam(attr[1], cls.types.get(attr[0], None))
-        obj = cls(**params)
-        if hasattr(obj, "LoadXml"):
-            obj.LoadXml(root)
-        else:
-            for child in root:
-                obj.AppendChild(self.__LoadAppearance(child))
-        return obj
+            elementobject = ElementObject(elementtype)
+        
+            element = Element(elementobject)
+        
+            element.Paint(cairo,delta = (50,200))
+        
+        elif (self.type=="Relationship"):
+            self.appearanceGenerator.SetTreeView(self.treeview.get_model())
+            domainType = DomainType("bulk")
+            domainType2 = DomainType("bulk")
+   
+            a = FakeFactory()
+            elementtype = ElementType(a)
+            elementtype.SetAppearance(self.appearanceGenerator.DummyObjectAppearance(self.__FakeElementForRelationship()))
+            elementtype.SetDomain(domainType)
+            elementtype2 = ElementType(a)
+            elementtype2.SetAppearance(self.appearanceGenerator.DummyObjectAppearance(self.__FakeElementForRelationship()))
+            elementtype2.SetDomain(domainType)
+        
+            elementobject = ElementObject(elementtype)
+            elementobject2 = ElementObject(elementtype2)
+            element = Element(elementobject)
+            element2 = Element(elementobject2)
+             
+            cairo = CairoCanvas(self.canvas)
+            cairo.Clear()
+             
+            connectionType = self.appearanceGenerator.DummyRelationshipProcesser(self.__FakeRelationship(),domainType2,a)
+            
+            connectionObject = ConnectionObject(connectionType,elementobject,elementobject2)
+             
+
+            element.Paint(cairo,delta = (30,100))
+            element.SetPosition((30,100))
+            element2.Paint(cairo,delta = (300,100))
+            element2.SetPosition((300,100))
+            connection = Connection(connectionObject,element,element2)
+             #points=[(200,100),(30,100)]
+            
+            connection.Paint(cairo,delta=(0,0))
+             
+                 
+        else: print "uncompatible type"
+        
+    def __FakeElement(self):
+        return AppearanceGenerator().GenerateXML()
     
+    def __FakeElementForRelationship(self):
+        return AppearanceGenerator().GenerateSampleRounded()
+    
+    def __FakeRelationship(self):
+        return AppearanceGenerator().GenerateRelationshipXML()
         
     def __ConstructRightTW(self):
         self.twProperties = gtk.TreeView()
-        self.hbox.pack_end(self.twProperties)    
+        self.hbox.pack_end(self.twProperties)  
         
+    def __ConstructPaths(self):
+        myVBox = gtk.VBox()
+        scrolled = gtk.ScrolledWindow()
+        myVBox.pack_start(scrolled, True, True, 0)
+        scrolled.show()
+        
+        self.paths = gtk.TreeView(self.pathsStore) 
+        self.paths.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        
+        column=gtk.TreeViewColumn("Path id")
+        self.paths.append_column(column)
+        cell = gtk.CellRendererText()
+        cell.set_property('editable',True)
+        column.pack_start(cell, True)
+        column.add_attribute(cell, "text", 0)
+        
+        column1=gtk.TreeViewColumn("Value")
+        self.paths.append_column(column1)
+        cell1 = gtk.CellRendererText()
+        column1.pack_start(cell1, True)
+        column1.add_attribute(cell1, "text", 1)
+        
+        a = FakeFactory().GetMetamodel().GetPathFactory()
+        for it in a.GetPaths():
+            key,value = it
+            newitem = self.pathsStore.append(None)
+            self.pathsStore.set(newitem,0,key,1,value)
+        
+        scrolled.add_with_viewport(self.paths)
+        myVBox.set_size_request(200,130)
+        #myVBox.pack_start(self.paths)
+        self.hboxBottom.pack_start(myVBox) 
+        
+    def __ConstructDomains(self):
+        self.domainsTree = gtk.TreeView(self.domainsTreeStore)
+        self.domainsTree.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        scrolled = gtk.ScrolledWindow()
+        scrolled.set_size_request(300,130)
+        self.hboxBottom.pack_start(scrolled,True,True,0)
+        scrolled.show()
+        
+        column = gtk.TreeViewColumn("Elements")
+        self.domainsTree.append_column(column)
+        cell=gtk.CellRendererText()
+        cell.set_property('editable',True)
+        column.pack_start(cell,True)
+        column.add_attribute(cell,"text",0)
+        
+        column1 = gtk.TreeViewColumn("Values")
+        self.domainsTree.append_column(column1)
+        cell1=gtk.CellRendererText()
+        column1.pack_start(cell1,True)
+        column1.add_attribute(cell1,"text",1)
+        
+        el = self.selected.GetObject().GetSaveInfo().items()
+        for it in el:
+            key,value = it
+            newitem = self.domainsTreeStore.append(None)
+            self.domainsTreeStore.set(newitem,0,key,1,value)
+        
+        scrolled.add_with_viewport(self.domainsTree)
+        
+        #self.hboxBottom.pack_start(self.domainsTree)   
+    
+    def __ConstructHints(self):
+        self.hboxBottomRight=gtk.VBox()
+        scrolled = gtk.ScrolledWindow()
+        self.hboxBottomRight.pack_start(scrolled, True, True, 0)
+        scrolled.show()
+        simpleListStore = gtk.ListStore(str)
+        hintsTree = gtk.TreeView(simpleListStore)
+        
+        column = gtk.TreeViewColumn("Variables")
+        hintsTree.append_column(column)
+        cell=gtk.CellRendererText()
+        cell.set_property('editable',True)
+        column.pack_start(cell,True)
+        column.add_attribute(cell,"text",0)
+        consts = None
+        if self.type=="Object":
+            consts = ELEMENT_HINTS   
+        elif self.type=="Relationship":
+            consts = CONNECTION_HINTS
+            
+        for it in consts:
+            newit = simpleListStore.append(None)
+            simpleListStore.set(newit,0,it)       
+        
+        scrolled.add_with_viewport(hintsTree)
+        #self.hboxBottomRight.set_size_request(150,130)
+        self.hboxBottomRight.show()
+        self.hboxBottom.pack_end(self.hboxBottomRight)    
+    
+    def __ConstructButtons(self):
+        hbutbox = gtk.HButtonBox()
+
+        close = gtk.Button("Close")
+        save = gtk.Button("Save")
+        close.connect('clicked',self.close)
+        save.connect('clicked',self.save)
+
+        hbutbox.add(close)
+        hbutbox.add(save)
+        self.hboxBottomRight.pack_end(hbutbox)          
+    
+    def close(self,param):
+        self.window.destroy()
+    
+    #self.visual_identity je kvoli tomu, ze ak podhodim zastupcu, tak najdem jeho realny element, ale 
+    #ten moze mat inu hodnotu self.visual_identity. avsak domenove informacie sedia    
+    def save(self,param):
+        if self.type == 'Object':
+            if self.visual_identity is not None: self.manager.metamodels[self.visual_identity]=self.treestore
+            else: self.manager.metamodels[self.selected.GetObject().GetValue(VISUAL_IDENTITY)]=self.treestore
+            print self.manager.metamodels
+        elif self.type == 'Relationship':
+            if self.visual_identity is not None: self.manager.metamodelsRel[self.visual_identity]=self.treestore
+            else: self.manager.metamodelsRel[self.selected.GetObject().GetValue(VISUAL_IDENTITY)]=self.treestore    
+            print self.manager.metamodelsRel
+                
     def on_button_press_event(self, widget, event):
         if (event is None): return       
         if event.button == 3 and event.type == gtk.gdk.BUTTON_PRESS:
-            c = ContextMenu(self)
-            c.popup(None, None, None, event.button, event.get_time())
-            
-    def test(self,widget,event):
-        print event.button
-        self.eventButton = event.button
-        widget.eventButton = event.button
-        print 'eB '+str(self.eventButton)
+            if (self.type=="Object"): c = ContextMenu(self)
+            elif (self.type=="Relationship"): c = ContextMenuLine(self)
+            c.popup(None, None, None, event.button, event.get_time())           
             
     def on_cursor_changed(self, treeview):
-        print "Treeview Cursor changed"
-
         ret = self.GetSelectedItem(treeview)
-        #if (ret is not None):
+
         self.SetPropertiesModel(ret)  
         
         self.PaintSelf()  
@@ -252,7 +484,6 @@ class EditWindow(object):
             test = gtk.TreeView()
             entry1, entry2 = widget.get_selection().get_selected()
             entry = entry1.get_value(entry2, 1)
-            print entry
             return entry
      
     def SetPropertiesModel(self, source):
@@ -260,9 +491,7 @@ class EditWindow(object):
         if (source is not None): 
             attr = source.GetAttributes().items()
             for it in attr:
-                print it
                 key, val = it
-                print key,val
                 newitem = self.tmpModel.append(None)
                 self.tmpModel.set(newitem,0,key,1,val)
         
@@ -286,6 +515,23 @@ class EditWindow(object):
         self.tvcolumnV.pack_start(cell1, True)
         self.tvcolumnV.add_attribute(cell1, "text", 1)
     
+    def __CreateRelationshipBase(self):
+        parent = self.treestore.append(None)
+        itempar = AppearanceFactory.CreateElement('ConnectionArrow')
+        self.treestore.set(parent,0,itempar.Identity(),1,itempar)
+        
+        quex = self.treestore.append(None)
+        item = AppearanceFactory.CreateElement('ConnectionLine')
+        self.treestore.set(quex,0,item.Identity(),1,item)
+        
+        quex5 = self.treestore.append(None)
+        item5 = AppearanceFactory.CreateElement('Label')
+        self.treestore.set(quex5,0,item5.Identity(),1,item5)
+        
+        quex6 = self.treestore.append(quex5)
+        item6 = AppearanceFactory.CreateElement('TextBox')
+        self.treestore.set(quex6,0,item6.Identity(),1,item6)
+         
     def value_edited(self,cell, path, new_text, user_data): 
         print user_data 
         liststore, column = user_data

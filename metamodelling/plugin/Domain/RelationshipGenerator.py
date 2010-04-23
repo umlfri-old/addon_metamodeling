@@ -4,7 +4,6 @@ Created on 23.3.2010
 @author: Michal Kovacik
 '''
 from lib.Exceptions import *
-import random
 from __init__ import *
 from lxml.etree import tostring
 from lxml.builder import ElementMaker
@@ -22,7 +21,7 @@ XML_HEAD = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 
 class RelationshipGenerator(object):
        
-    def GenerateRelationship(projectname,obj):
+    def GenerateRelationship(projectname,obj,zipfile=None):
         
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
@@ -40,6 +39,10 @@ class RelationshipGenerator(object):
             newatt.set("type",type)
             newatt.set("name",name)
             object.append(newatt)
+        
+        if (zipfile is not None):
+            zipfile.writestr("metamodel/domains/"+identity+".xml", tostring(object,encoding=None,method="xml",pretty_print=True))
+            return
         
         print(tostring(object,encoding=None,method="xml",pretty_print=True))
         f = open(addonPath+projectname+"/metamodel/domains/"+identity+".xml","w");

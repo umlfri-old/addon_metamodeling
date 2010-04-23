@@ -17,10 +17,6 @@ class BaseElement(object):
     def __init__(self):
         self.attribs = dict()
     
-    #own implementation of this method in subclass is required
-    def Paint(self,context):
-        pass
-    
     def GetAttributes(self):
         return self.attribs
     
@@ -43,7 +39,7 @@ class Align(BaseElement):
 class Condition(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
-        self.attribs["condition"]=""
+        self.attribs["condition"]="True"
     def Identity(self):
         return "Condition" 
         
@@ -60,7 +56,7 @@ class Diamond(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["fill"]=""
-        self.attribs["border"]="white"
+        self.attribs["border"]="black"
         
     def Identity(self):
         return "Diamond" 
@@ -69,7 +65,7 @@ class Ellipse(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["fill"]=""
-        self.attribs["border"]="white" 
+        self.attribs["border"]="black" 
         
     def Identity(self):
         return "Ellipse" 
@@ -94,7 +90,7 @@ class Line(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["type"]="auto"
-        self.attribs["color"]=""  
+        self.attribs["color"]="black"  
         
     def Identity(self):
         return "Line"   
@@ -102,7 +98,7 @@ class Line(BaseElement):
 class Loop(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
-        self.attribs["collection"]=""
+        self.attribs["collection"]="None"
     
     def Identity(self):
         return "Loop" 
@@ -129,7 +125,7 @@ class Rectangle(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["fill"]=""
-        self.attribs["border"]="white"
+        self.attribs["border"]="black"
         self.attribs["lefttop"]=""
         self.attribs["righttop"]=""
         self.attribs["leftbottom"]=""
@@ -145,8 +141,8 @@ class Rectangle(BaseElement):
 class Shadow(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
-        self.attribs["padding"]=""
-        self.attribs["color"]=""
+        self.attribs["padding"]=5
+        self.attribs["color"]="black"
         
     def Identity(self):
         return "Shadow" 
@@ -156,10 +152,10 @@ class Sizer(BaseElement):
         BaseElement.__init__(self)
         self.attribs["minwidth"]=0
         self.attribs["minheight"]=0
-        self.attribs["maxwidth"]=0
-        self.attribs["maxheight"]=0
-        self.attribs["width"]=0
-        self.attribs["height"]=0
+        self.attribs["maxwidth"]=10
+        self.attribs["maxheight"]=10
+        self.attribs["width"]=5
+        self.attribs["height"]=5
         
     def Identity(self):
         return "Sizer" 
@@ -177,7 +173,7 @@ class Svg(BaseElement):
 class Switch(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
-        self.attribs["value"]=""
+        self.attribs["value"]="None"
 
     def Identity(self):
         return "Switch" 
@@ -185,8 +181,8 @@ class Switch(BaseElement):
 class TextBox(BaseElement):
     def __init__(self):
         BaseElement.__init__(self)
-        self.attribs["text"]=""
-        self.attribs["linestart"]=""
+        self.attribs["text"]="some text"
+        #self.attribs["linestart"]=""
         self.attribs["color"]="black"
         self.attribs["font"]="Arial 10"
         
@@ -200,6 +196,68 @@ class VBox(BaseElement):
         
     def Identity(self):
         return "VBox" 
+    
+class ConnectionArrow(BaseElement):
+    def __init__(self):
+        BaseElement.__init__(self)
+        self.attribs["index"]=-1
+        self.attribs["direction"]=""
+        self.attribs["style"]="simple_arrow" 
+        self.attribs["color"]="black"   
+        self.attribs["fill"]=""
+        self.attribs["size"]="5"
+        
+    def Identity(self):
+        return "ConnectionArrow"
+    
+class ConnectionLine(BaseElement):
+    def __init__(self):
+        BaseElement.__init__(self)
+        self.attribs["color"]="black"
+        self.attribs["style"]=""
+        self.attribs["width"]=""
+        
+    def Identity(self):
+        return "ConnectionLine"  
+    
+class Label(BaseElement):
+    def __init__(self):
+        BaseElement.__init__(self) 
+        self.attribs["position"]="center"
+        
+    def Identity(self):
+        return "Label"   
+    
+class Case(BaseElement):
+    def __init__(self):
+        BaseElement.__init__(self)
+        self.attribs["type"]="equal"
+        self.attribs["negate"]="False"
+        self.attribs["condition"]=""  
+        
+    def Identity(self):
+        return "Case"  
+    
+class G(BaseElement):
+    def __init__(self):
+        BaseElement.__init__(self)
+        self.attribs["id"]=""
+        self.attribs["style"]=""
+        self.attribs["transform"]=""  
+        
+    def Identity(self):
+        return "g"     
+    
+class Path(BaseElement):
+    def __init__(self):
+        BaseElement.__init__(self)
+        self.attribs["id"]=""
+        self.attribs["d"]=""
+        self.attribs["style"]=""
+        self.attribs["transform"]=""  
+        
+    def Identity(self):
+        return "path"            
 
 class AppearanceFactory(object):
           
@@ -241,6 +299,18 @@ class AppearanceFactory(object):
             return TextBox()
         elif (objectType=="VBox"):
             return VBox()
+        elif (objectType=="ConnectionArrow"):
+            return ConnectionArrow()
+        elif (objectType=="ConnectionLine"):
+            return ConnectionLine()
+        elif (objectType=="Label"):
+            return Label()
+        elif (objectType=="Case"):
+            return Case()
+        elif (objectType=="G"):
+            return G()
+        elif (objectType=="Path"):
+            return Path()
         
 if __name__ == '__main__':
     a = AppearanceFactory()

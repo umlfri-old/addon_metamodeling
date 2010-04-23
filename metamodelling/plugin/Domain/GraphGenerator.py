@@ -19,12 +19,12 @@ IDENTITY = "name"
 PROP_IDENTITY = "properties"
 NMS_METAMODEL = "http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd"
 XML_HEAD = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-ICON_PATH = "icons/logo.png"
+ICON_PATH = "icons/"
 META_IDENTITY = "visual_identity"
 
 class GraphGenerator(object):
        
-    def GenerateGraph(projectname,obj):
+    def GenerateGraph(projectname,obj,zipfile=None):
         
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
@@ -34,12 +34,12 @@ class GraphGenerator(object):
         object.set("id",identity)
         
         icon = A.Icon()
-        icon.set("path",ICON_PATH)
+        icon.set("path",ICON_PATH+identity+".png")
         object.append(icon)
         
         domain = A.Domain()
         #tu treba dat domenu 
-        domain.set("id","SampleDomain") 
+        domain.set("id","SimpleDiagram") 
         domain.set("identity","name")
         object.append(domain)
         
@@ -64,7 +64,10 @@ class GraphGenerator(object):
             
         object.append(connections)    
         
-        
+        if (zipfile is not None):
+            zipfile.writestr("metamodel/diagrams/"+identity+".xml", tostring(object,encoding=None,method="xml",pretty_print=True))
+            return
+            
         print(tostring(object,encoding=None,method="xml",pretty_print=True))
         f = open(addonPath+projectname+"/metamodel/diagrams/"+identity+".xml","w");
         f.write(XML_HEAD)
@@ -78,8 +81,9 @@ class GraphGenerator(object):
         #v buducnosti z toho moze byt aj filter, pripadne validator, minimalne ak pridam ine elementy
         mydict = dict()
         for it in diag.GetElements():
-            if (mydict.has_key(it.GetObject().GetValue(META_IDENTITY))==False):
-                mydict[it.GetObject().GetValue(META_IDENTITY)]=it.GetObject()
+            if (it.GetObject().GetType()=="Object"):
+                if (mydict.has_key(it.GetObject().GetValue(META_IDENTITY))==False):
+                    mydict[it.GetObject().GetValue(META_IDENTITY)]=it.GetObject()
                 #mydict.items().append(eval('{\"it.GetObject().GetValue(META_IDENTITY)\":it.GetObject()}'))        
         return mydict.values() 
     

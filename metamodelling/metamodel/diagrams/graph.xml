@@ -5,19 +5,12 @@
     <Special swimlines="0" lifelines="0" />
     <Elements>
         <Item value="Object"/>
-        <!--Item value="Gateway"/>
-        <Item value="ForkJoin"/>
-        <Item value="InclusiveDecisionMerge"/>
-        <Item value="Task"/>
-        <Item value="Process"/>
-        <Item value="Start"/>
-        <Item value="Intermediate"/>
-        <Item value="End"/>
-        <Item value="Data"/-->
+        <Item value="ObjectStakeholder"/>
+        <Item value="Enum"/>
+        <Item value="Domain"/>
     </Elements>
     <Connections>
         <Item value="Relationship"/>
-        <!--Item value="MessageFlow"/>
-        <Item value="SequenceFlow"/-->
+        <Item value="RelationshipStakeholder"/>
     </Connections>
 </DiagramType>
