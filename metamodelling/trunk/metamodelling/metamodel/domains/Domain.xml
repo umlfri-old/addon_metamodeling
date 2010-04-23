@@ -1,0 +1,34 @@
+<Domain id="Domain" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" >
+    <Attribute id="domain_name" name="domain name" >
+			<Str default="Domain01"/>
+    </Attribute>
+    <Attribute id="properties" name="properties">
+			<List>
+			<Domain>
+				<Attribute id="name" name="name" >
+					<Str/>
+				</Attribute>
+				<Attribute id="role" name="Role" >
+					<Str/>
+				</Attribute>
+				<Attribute id="type" name="type" >
+					<Enum>
+						<Value>str</Value>
+						<Value>text</Value>
+						<Value>int</Value>
+						<Value>float</Value>
+						<Value>bool</Value>
+						<Value>enum</Value>
+						<Value>domain</Value>
+					</Enum>
+				</Attribute>
+				<Attribute id="default" name="default">
+					<Str default=""/>
+				</Attribute>
+			</Domain>
+			</List>
+	</Attribute>
+	<Attribute id="note" name="Note" >
+		<Text/>
+	</Attribute>	
+</Domain>

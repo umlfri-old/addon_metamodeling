@@ -1,0 +1,44 @@
+<ElementType id="ObjectStakeholder" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/ObjectStakeholder.png"/>
+    <Domain id="ObjectStakeholder"/>
+    <Connections>
+        <Item value="Relationship"/>
+        <Item value="RelationshipStakeholder"/>
+    </Connections>
+    <Appearance>
+        <Shadow padding="3" color="##20fa20">
+            <Rectangle fill="#cfg.Styles.Element.FillColor" border="##20fa20" right="10 rounded_side" left="10 rounded_side">
+                <Sizer minheight="50" minwidth="100">
+					<HBox>
+                    <Padding padding="5"> 
+						<Condition condition="#self.ref_object_name">			
+							<Align align="center center"> 
+								<VBox expand="0">
+									<TextBox text="copy of " font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+									<TextBox text="&lt;&lt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+									<TextBox text="#self.ref_object_name" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+									<TextBox text="&gt;&gt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+								</VBox>
+							</Align> 
+						</Condition>	     
+                    </Padding>  
+                    <Padding padding="5"> 
+						<Condition condition="#self.visual_identity">			
+							<Align align="center center"> 
+								<VBox expand="0">
+									<TextBox text="visual " font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+									<TextBox text="&lt;&lt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+									<TextBox text="#self.visual_identity" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+									<TextBox text="&gt;&gt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+								</VBox>
+							</Align> 
+						</Condition>	     
+                    </Padding>
+                    </HBox>  
+                </Sizer>
+            </Rectangle>
+        </Shadow>
+    </Appearance>
+    <Options>
+    </Options>
+</ElementType>

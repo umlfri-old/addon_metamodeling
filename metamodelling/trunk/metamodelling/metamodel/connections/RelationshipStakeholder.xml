@@ -1,0 +1,37 @@
+<ConnectionType xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="RelationshipStakeholder">
+    <Icon path="icons/relationshipStakeholder.png"/>
+    <Domain id="RelationshipStakeholder" identity="name"/>
+    
+    <Appearance>
+        <ConnectionLine style="solid" color="##20fa20"/>
+        <ConnectionArrow index="-1" style="simple_arrow" color="#cfg.Styles.Connection.ArrowColor"/>
+        <Label position="center-1">
+            <Condition condition="#self.ref_relationship_name">
+                <Align align="center">
+                    <Rectangle fill="#cfg.Styles.Connection.TextFill">
+						<VBox expand="0">
+						<TextBox text="copy of " font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+						<TextBox text="&lt;&lt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+                        <TextBox text="#self.ref_relationship_name" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+                        <TextBox text="&gt;&gt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+                        </VBox>
+                    </Rectangle>
+                </Align>
+            </Condition>
+        </Label>
+        <Label position="center+1">
+            <Condition condition="#self.visual_identity">
+                <Align align="center">
+                    <Rectangle fill="#cfg.Styles.Connection.TextFill">
+						<VBox expand="0">
+						<TextBox text="visual " font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+						<TextBox text="&lt;&lt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+                        <TextBox text="#self.visual_identity" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+                        <TextBox text="&gt;&gt;" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+                        </VBox>
+                    </Rectangle>
+                </Align>
+            </Condition>
+        </Label>
+    </Appearance>
+</ConnectionType>
