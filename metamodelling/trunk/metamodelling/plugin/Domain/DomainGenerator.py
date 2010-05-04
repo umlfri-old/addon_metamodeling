@@ -13,11 +13,17 @@ addonPath = "share/addons/"
 OBJ_IDENTITY = "object_name"
 
 class DomainGenerator(object):
+    '''
+    class which manages domain process creation
+    '''
     def __init__(self,pluginobj,project):
         self.project = project
         self.projectname = pluginobj.projectname
         
     def GenerateDomains(self,zipfile=None):
+        '''
+        for all Objects and Relationships generates the data background on the file system
+        '''
         if (not self.ValidateDomains()):
             return
         if not zipfile: self.__GenerateDirectories(self.projectname)
@@ -32,6 +38,9 @@ class DomainGenerator(object):
                 #RelationshipGenerator.GenerateRelationship(self.projectname,diag.GetConnections()[i],zipfile) 
           
     def ValidateDomains(self):
+        '''
+        defines domain validation 
+        '''
         for diag in self.project.GetRoot().GetDiagrams():
             if (len(diag.GetElements())==0):
                 #tu by mala byt hlaska o tom, ze nemame co generovat
@@ -47,6 +56,9 @@ class DomainGenerator(object):
         return True 
     
     def __GenerateDirectories(self,projectname):
+        '''
+        when output is directly into filesystem, system of directories is this way created
+        '''
         try:
             basicPath = addonPath+projectname
             metaPath = basicPath+"/metamodel"
@@ -75,6 +87,4 @@ class DomainGenerator(object):
             return    
         print "Directories were generated successfully"
         
-    #def isElementEmpty(self,element):
-    #    pass    
         

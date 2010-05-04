@@ -26,9 +26,13 @@ ENUM_IDENTITY = "enum_name"
 DOMAIN_IDENTITY = "domain_name"
 
 class RelationshipVisualGenerator(object):
-       
+    '''
+    Class for generating visual representation of a relationship
+    '''   
     def GenerateRelationship(projectname,visual_identity,treemodel,domainname,zipfile=None):
-        
+        '''
+        static method intended to create XML file describing a relationship's look
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
         object = A.ConnectionType()

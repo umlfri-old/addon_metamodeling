@@ -1,5 +1,5 @@
 
-class AbstractCanvas():
+class AbstractCanvas(object):
     def __init__(self):
         pass
     

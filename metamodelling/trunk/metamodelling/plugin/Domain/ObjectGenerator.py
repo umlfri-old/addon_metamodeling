@@ -26,9 +26,13 @@ ENUM_IDENTITY = "enum_name"
 DOMAIN_IDENTITY = "domain_name"
 
 class ObjectGenerator(object):
-       
+    '''
+    generates Object or Relationship data/domain background on file system
+    '''   
     def GenerateObject(projectname,project,obj,zipfile=None):
-        
+        '''
+        main entrance point when generating domain/data background
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
         object = A.Domain()
@@ -95,16 +99,18 @@ class ObjectGenerator(object):
             zipfile.writestr("metamodel/domains/"+identity+".xml", tostring(object,encoding=None,method="xml",pretty_print=True))
             return
         
-        #print(tostring(object,encoding=None,method="xml",pretty_print=True))
         f = open(addonPath+projectname+"/metamodel/domains/"+identity+".xml","w");
         f.write(XML_HEAD)
         f.writelines(tostring(object,encoding=None,method="xml",pretty_print=True))
         f.close()
      
-    #staticka metoda    
+    #static method   
     GenerateObject = Callable(GenerateObject)    
     
     def __GenerateStr(A,name,default=None):
+        '''
+        when Str attribute is detected, this method appends the appropriate tag
+        '''
         newatt = A.Attribute()
         newatt.set("id",name)
         newatt.set("name",name)
@@ -114,6 +120,9 @@ class ObjectGenerator(object):
         return newatt
     
     def __GenerateText(A,name,default=None):
+        '''
+        when Text attribute is detected, this method appends the appropriate tag
+        '''
         newatt = A.Attribute()
         newatt.set("id",name)
         newatt.set("name",name)
@@ -123,6 +132,9 @@ class ObjectGenerator(object):
         return newatt
     
     def __GenerateInt(A,name,default=None):
+        '''
+        when Int attribute is detected, this method appends the appropriate tag
+        '''
         newatt = A.Attribute()
         newatt.set("id",name)
         newatt.set("name",name)
@@ -132,6 +144,9 @@ class ObjectGenerator(object):
         return newatt
     
     def __GenerateFloat(A,name,default=None):
+        '''
+        when Float attribute is detected, this method appends the appropriate tag
+        '''
         newatt = A.Attribute()
         newatt.set("id",name)
         newatt.set("name",name)
@@ -141,6 +156,9 @@ class ObjectGenerator(object):
         return newatt
     
     def __GenerateBool(A,name,default=None):
+        '''
+        when Bool attribute is detected, this method appends the appropriate tag
+        '''
         newatt = A.Attribute()
         newatt.set("id",name)
         newatt.set("name",name)
@@ -150,6 +168,9 @@ class ObjectGenerator(object):
         return newatt
     
     def __GenerateEnum(A,name,role,project,default=None):
+        '''
+        when Bool attribute is detected, this method links the enum from diagrams and generates the whole structure needed
+        '''
         newatt = A.Attribute()
         if (role != "") : 
             newatt.set("id",role)
@@ -177,6 +198,9 @@ class ObjectGenerator(object):
         return newatt    
     
     def __GenerateDomain(A,name,role,project,default=None):
+        '''
+        when Domain type is detected, finds the Domain object in diagrams and enter the recursive linking method
+        '''
         newatt = A.Attribute()  
         if (role != "") : 
             newatt.set("id",role)
@@ -199,6 +223,9 @@ class ObjectGenerator(object):
         return newatt
         
     def __GenerateSubDomain(A,name,role,project,domain,object):
+        '''
+        recursive method fired from linked domain, which adds its content to desired data/domain part of Object or Relationship
+        '''
         prop_dict = eval(domain.GetValue(PROP_IDENTITY))
         for els in prop_dict:
             type = els.get("type")

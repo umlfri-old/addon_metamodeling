@@ -4,7 +4,7 @@ from lib.Exceptions import DomainTypeError
 import weakref
 #from lib.Base import CBaseObject
 
-class DomainType():
+class DomainType(object):
     '''
     @cvar ATOMIC: list of names of atomic attribute types
     @ivar name: name/id of domain
@@ -31,12 +31,6 @@ class DomainType():
         self.joiners = []
         self.attributeorder = []
     
-#    def GetFactory(self):
-#        '''
-#        @retrun: Current domain factory
-#        @rtype: L{CDomainFactory<Factory.CDomainFactory>}
-#        '''
-#        return self.factory()
     
     def AppendAttribute(self, id, name, type = None, default = None, hidden=False):
         '''
@@ -145,24 +139,6 @@ class DomainType():
     def AppendJoiner(self, joiner):
         self.joiners.append(joiner)
         
-#    def __InnerImportLoop(self, name):
-#        '''
-#        Inner recursive loop of self.HasImportLoop
-#        
-#        @param name: id of domain that is searched in import tree
-#        @type name: str
-#        
-#        @return: string representing part of the loop or False
-#        @rtype: bool / str
-#        '''
-#        for imported in self.imports:
-#            if name == imported: 
-#                return self.name + ' - ' + name
-#            else:
-#                result = self.GetFactory().GetDomain(imported).__InnerImportLoop(name)
-#                if result:
-#                    return self.name + ' - ' + result
-#        return False
 
     def HasImportLoop(self):
         '''
@@ -181,34 +157,7 @@ class DomainType():
                     or (self.attributes[name]['type'] == 'list' 
                         and ('list' not in self.attributes[name]
                             or self.attributes[name]['list']['type'] is None))]
-    
-#    def UndefinedImports(self):
-#        '''
-#        @return: list of the domain names that are imported but not recognized
-#        @rtype: list
-#        '''
-#        return ([name for name in self.imports if not self.GetFactory().HasDomain(name)])
-    
-#    def CheckMissingInfo(self):
-#        '''
-#        Search trough self.attributes for missing information such as:
-#            - enum part of attributes with "enum" domain
-#            - list part of attributes with "list" domain and all its 
-#        '''
-#        for id, info in self.attributes.iteritems():
-#            if info['type'] == 'enum' and len(info.get('enum',[])) == 0:
-#                raise DomainTypeError('In domain "&s" is attribute "&s" of enum '
-#                    'domain, but has no "enum" values defined'&(self.name, id))
-#            elif info['type'] == 'list':
-#                if 'list' not in info:
-#                    raise DomainTypeError('In domain "&s" is attribute "&s" of list '
-#                        'domain, but has no "list" definition'&(self.name, id))
-#                elif ('parser' in info['list'] and 
-#                    not self.IsAtomic(domain = info['list']['type']) and 
-#                    len(list(self.GetFactory().GetDomain(info['list']['type']).IterParsers())) == 0):
-#                    raise DomainTypeError('"%s.%s" is list with parser, but used domain "%s" '
-#                        'has no parser.' % (self.name, id, info['list']['type']))
-    
+       
     def CheckDefault(self):
         '''
         Search through self.attributes for validity of default values
@@ -267,46 +216,6 @@ class DomainType():
         @rtype: list
         '''
         return self.imports
-    
-#    def GetDefaultValue(self, id=None, domain=None):
-#        '''
-#        @return: default value of item defined by id
-#        @rtype: various
-#        
-#        @raise DomainTypeError: when id is not valid item or domain is unknown
-#        or none of parameters are set
-#        
-#        @param id: item identifier
-#        @type id: str
-#        '''
-#        
-#        if id is not None:
-#            if not id in self.attributes:
-#                raise DomainTypeError('Unknown identifier %s'%(id, ))
-#            type = self.attributes[id]['type']
-#        
-#        elif domain is not None and (self.IsAtomic(domain=domain) or self.GetFactory().HasDomain(domain)):
-#            type = domain
-#        
-#        else:
-#            raise DomainTypeError('None of the parameters are valid\n'
-#                'id = "%s" domain = "%s"'%(id, domain))
-#        
-#        if self.IsAtomic(domain=type):
-#            if type == 'int': 
-#                return self.attributes[id]['default'] or 0
-#            elif type == 'float':
-#                return self.attributes[id]['default'] or 0.0
-#            elif type == 'bool':
-#                return self.attributes[id]['default'] or False
-#            elif type in ('str', 'text'):
-#                return self.attributes[id]['default'] or ''
-#            elif type == 'list':
-#                return []
-#            elif type == 'enum':
-#                return self.attributes[id]['default'] or self.attributes[id]['enum'][0]
-#        else:
-#            return CDomainObject(self.GetFactory().GetDomain(type))
     
     def IsAtomic(self, id=None, domain=None):
         '''
@@ -456,49 +365,6 @@ class DomainType():
         else:
             raise DomainTypeError('value cannot be converted to enumeration item')
     
-#    def __GetList(self, value, type, parser=None):
-#        if isinstance(value, (str, unicode)) and parser is not None : 
-#            domain = self.GetFactory().GetDomain(type)
-#            atempt = [False]
-#            
-#            for itemparser in domain.IterParsers():
-#                attempt = [itemparser.CreateObject(part, domain) for part in parser.Split(value)]
-#                if all(attempt):
-#                    break
-#            
-#            if not all(attempt):
-#                raise DomainTypeError('No parser can parse all the items in the list')
-#            return attempt
-#            
-#        elif isinstance(value, (list, tuple)):
-#            return [self.__GetNonAtomic(item, type) for item in value]
-#            
-#        else:
-#            raise DomainTypeError('value cannot be converted to list')
-
-    
-#    def __GetNonAtomic(self, value, type):
-#        domain = self.GetFactory().GetDomain(type)
-#        if isinstance(value, CDomainObject):
-#            if value.GetType().GetName() == type:
-#                return value
-#            else:
-#                raise DomainTypeError('Type mismatch')
-#        elif isinstance(value, (str, unicode)):
-#            attempt = None
-#            for parser in domain.IterParsers():
-#                attempt = parser.CreateObject(value, domain)
-#                if attempt:
-#                    break
-#            if not attempt:
-#                raise DomainTypeError('No parser can parse value')
-#            return attempt
-#        elif isinstance(value, dict):
-#            result = CDomainObject(domain)
-#            result.SetSaveInfo(value)
-#            return result
-#        else:
-#            raise DomainTypeError('Invalid value type')
     
     def PackValue(self, id, value):
         '''

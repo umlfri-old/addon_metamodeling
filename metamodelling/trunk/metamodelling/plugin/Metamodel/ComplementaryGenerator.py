@@ -31,9 +31,18 @@ MY_PLUGIN_NAME="metamodelling"
 SAMPLE_DOMAIN_ID="SimpleDiagram"
 
 class ComplementaryGenerator(object):
-       
+    '''
+    ComplementaryGenerator is used to generate all the files that are used to support the metamodel
+    it should be modified if the background machine used for loading metamodels into application is changed
+    other classes should stay in most cases untouched
+    it provides a set of static method, so no instance creation of this type is allowed.
+    zipfile variable is a last one in all methods and it determines if output is for .fria file
+    '''   
     def GenerateMetamodelFile(projectname,diagrams,zipfile=None):
-        
+        '''
+        this method generates metamodel.xml file
+        this file contains currently diagrams/graphs which metamodel supports
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
         object = A.Metamodel()
@@ -49,16 +58,18 @@ class ComplementaryGenerator(object):
             zipfile.writestr("metamodel/metamodel.xml", tostring(object,encoding=None,method="xml",pretty_print=True))
             return
                
-        #print(tostring(object,encoding=None,method="xml",pretty_print=True))
         f = open(addonPath+projectname+"/metamodel/metamodel.xml","w");
         f.write(XML_HEAD)
         f.writelines(tostring(object,encoding=None,method="xml",pretty_print=True))
         f.close()
      
-    #staticka metoda    
+    #static method    
     GenerateMetamodelFile = Callable(GenerateMetamodelFile)    
     
     def CopyPaths(projectname,zipfile=None):
+        '''
+        this method copies paths.xml from metamodelling plugin into project under construction
+        '''
         if (zipfile is not None):
             zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/metamodel/paths.xml", "metamodel/paths.xml")
             return
@@ -68,6 +79,10 @@ class ComplementaryGenerator(object):
     CopyPaths = Callable(CopyPaths)
     
     def CopySampleDomain(projectname,zipfile=None):
+        '''
+        this method copies sampledomain from metamodelling plugin into project under construction
+        sampledomain is default for all diagrams/graph at the time
+        '''
         if (zipfile is not None):
             zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/metamodel/domains/"+SAMPLE_DOMAIN_ID+".xml", "metamodel/domains/"+SAMPLE_DOMAIN_ID+".xml")
             return
@@ -77,6 +92,9 @@ class ComplementaryGenerator(object):
     CopySampleDomain = Callable(CopySampleDomain)
     
     def CopyDummyGraphIcon(projectname,graphs,zipfile=None):
+        '''
+        for all graphs is copied a dummy icon which user can change of course in latter phase (when physically generated)
+        '''
         for gr in graphs:
             if (zipfile is not None):
                 zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/icons/sampleGraph.png","metamodel/icons/"+gr+".png")
@@ -87,6 +105,9 @@ class ComplementaryGenerator(object):
     CopyDummyGraphIcon = Callable(CopyDummyGraphIcon)
     
     def CopyDummyObjectIcon(projectname,el,zipfile=None):
+        '''
+        for el (name of Object) copy a dummy icon
+        '''
         if (zipfile is not None):
             zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/icons/sampleDomain.png","metamodel/icons/"+el+".png")
             return
@@ -96,6 +117,9 @@ class ComplementaryGenerator(object):
     CopyDummyObjectIcon = Callable(CopyDummyObjectIcon)  
     
     def CopyDummyRelationshipIcon(projectname,el,zipfile=None):
+        '''
+        for el(name of Relationship) copy a dummy icon
+        '''
         if (zipfile is not None):
             zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/icons/sampleRelationship.png","metamodel/icons/"+el+".png")
             return
@@ -105,6 +129,9 @@ class ComplementaryGenerator(object):
     CopyDummyRelationshipIcon = Callable(CopyDummyRelationshipIcon)  
     
     def CopyDummyProjectIcon(projectname,zipfile=None):
+        '''
+        copy a dummy icon for project which appears in a screen when selecting a new project
+        '''
         if (zipfile is not None):
             zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/icons/sampleIcon.png","icons/"+projectname+".png")
             return
@@ -114,6 +141,10 @@ class ComplementaryGenerator(object):
     CopyDummyProjectIcon = Callable(CopyDummyProjectIcon)
     
     def CopyPackageItems(projectname,zipfile=None):
+        '''
+        Package is for all the metamodels currently the same set of files
+        this method just copies them into metamodel under construction
+        '''
         if (zipfile is not None):
             zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/metamodel/icons/Package.png","metamodel/icons/Package.png")
             zipfile.write(addonPath+"/"+MY_PLUGIN_NAME+"/metamodel/domains/Package.xml","metamodel/domains/Package.xml")
@@ -127,6 +158,9 @@ class ComplementaryGenerator(object):
     CopyPackageItems = Callable(CopyPackageItems)
     
     def GenerateTemplate(projectname,zipfile=None):
+        '''
+        template is paired with a link on screen where user can create a new project
+        '''
         A = ElementMaker(namespace=NMS_UMLPROJECT,
                           nsmap={None : NMS_UMLPROJECT})
         
@@ -201,6 +235,9 @@ class ComplementaryGenerator(object):
     GenerateTemplate = Callable(GenerateTemplate)
     
     def GenerateAddon(projectname,zipfile=None):
+        '''
+        addon file registrates the metamodel. It has description and author name included, for instance
+        '''
         A = ElementMaker(namespace=NMS_ADDON,
                           nsmap={None : NMS_ADDON})
         

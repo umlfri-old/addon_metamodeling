@@ -1,5 +1,5 @@
 
-class DrawingContext():
+class DrawingContext(object):
     def __init__(self, canvas, element, pos, size = (None, None)):
         self.canvas = canvas
         self.element = element

@@ -1,10 +1,8 @@
 from lib.config import config
-from lib.Drawing import CConnection
+from Connection import Connection
 from CacheableObject import CacheableObject
-#from SelectableObject import CSelectableObject
 from DrawingContext import DrawingContext
 
-#class VisibleObject(CCacheableObject, CSelectableObject):
 class VisibleObject(CacheableObject):
     '''
     Ancestor for CElement/Element and CConLabel    
@@ -17,7 +15,6 @@ class VisibleObject(CacheableObject):
         self.position = (0,0)
         self.deltaSize = (0,0)
         CacheableObject.__init__(self)
-        #CSelectableObject.__init__(self)
 
     def AreYouAtPosition(self, canvas, pos):
         x, y = pos

@@ -32,16 +32,6 @@ def PixmapFromPath(storage, path):
     return tmp
 
 def HexToRGB(hexcolor):
-    #converts Hex colors(HTML format) to RGB, used to set fg, bg, font color
-
-    #if not hexcolor[0] == '#': # if hexcolor is a word 
-    #    hexcolor = colors.colors[hexcolor]
-    #hexcolor = hexcolor.strip()
-    #hexcolor = hexcolor[1:]
-    #if len(hexcolor) != 6:
-    #    raise DrawingError('Invalid hex color, use #RRGGBB format or color name.')
-    #r, g, b = hexcolor[:2], hexcolor[2:4], hexcolor[4:]
-    #r, g, b = [int(n, 16) for n in (r, g, b)]
     r, g, b = hexcolor.GetRed(), hexcolor.GetGreen(), hexcolor.GetBlue()
     return (float(r)/255, float(g)/255, float(b)/255)
 

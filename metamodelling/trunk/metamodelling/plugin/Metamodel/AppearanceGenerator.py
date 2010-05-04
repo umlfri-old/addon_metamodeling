@@ -24,6 +24,9 @@ NMS_METAMODEL = "http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd"
 XML_HEAD = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 
 class Singleton(type):
+    '''
+    Singleton is a type matching the Singleton design pattern
+    '''
     def __init__(cls, name, bases, dict):
         super(Singleton, cls).__init__(name, bases, dict)
         cls.instance = None
@@ -35,15 +38,28 @@ class Singleton(type):
         return cls.instance
 
 class AppearanceGenerator(object):
+    '''
+    AppearanceGenerator is a Singleton class.
+    It is used to transform Tree stores into XML or generate XML layout for sample object.
+    Also other transformations from Tree store data into XML is in this class competence.
+    '''
     __metaclass__ = Singleton
     def __init__(self):
         self.model=None
         
     def SetTreeView(self,treestore):
+        '''
+        this method is important to be launched at least once
+        
+        @param treestore: treestore object which is set as model
+        @type treestore: L{gtk.TreeStore<gtk.TreeStore>}
+        '''
         self.model = treestore
     
-    #this should create a simple ellipse with "sample" caption
     def GenerateSampleRounded(self):
+        '''
+        this method should create a simple ellipse with "sample" caption
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
          
@@ -70,6 +86,13 @@ class AppearanceGenerator(object):
         
     
     def GetXMLElement(self,iterroot,A,fileOutput=False):
+        '''
+        this method gets subelement of iterroot
+        it has two variants (one is preview mode(fileOutput=False) and one is mode used for file output(fileOutput=True))
+        
+        @return: xml from iter
+        @rtype: string
+        '''
         rootobj = self.model.get_value(iterroot,1)
         root = A(rootobj.Identity())
         attr = rootobj.GetAttributes().items()
@@ -98,7 +121,10 @@ class AppearanceGenerator(object):
         return root
     
     def GenerateRelationshipXML(self,fileOutput=False):
-        
+        '''
+        Generates whole XML visual definition for relationship by the model currently set
+        it supports multiple trees (forest)
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                          nsmap={None : NMS_METAMODEL}) 
        
@@ -110,7 +136,6 @@ class AppearanceGenerator(object):
                 root.append(self.GetXMLElement(iterroot, A,fileOutput))
                 iterroot=self.model.iter_next(iterroot)
 
-            #print(tostring(root,encoding=None,method="xml",pretty_print=True))
             return root 
         else:
             root = A.Appearance()
@@ -119,7 +144,10 @@ class AppearanceGenerator(object):
            
        
     def GenerateXML(self,fileOutput=False):
-        
+        '''
+        Generates whole XML visual definition for object by the model currently set
+        it requires only a tree representation
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
           
@@ -151,11 +179,13 @@ class AppearanceGenerator(object):
                 root.append(self.GetXMLElement(first,A,fileOutput))
                 first=self.model.iter_next(first)
         
-        #print(tostring(root,encoding=None,method="xml",pretty_print=True))
         return root
     
     def DummyRelationshipAppearance(self,root):
-        #toto je ako __LoadAppearance Connectionu
+        '''
+        This is like __LoadAppearance of CConnection base class.
+        it processes XML and generates visual object representing the Relationship tree
+        '''
         tagName = root.tag.split("}")[1]
         
         if tagName not in ALL_CONNECTION:
@@ -180,7 +210,10 @@ class AppearanceGenerator(object):
         return ret 
     
     def DummyObjectAppearance(self,root):
-        #toto je ako __LoadAppearance Elementu
+        '''
+        this is like __LoadAppearance of Element
+        it processes XML and generates visual object representing the Object tree
+        '''
         if root.tag.split("}")[1] not in ALL:
             raise FactoryError("XMLError", root.tag)
         cls = ALL[root.tag.split("}")[1]]
@@ -196,6 +229,10 @@ class AppearanceGenerator(object):
         return obj
     
     def DummyRelationshipProcesser(self,root,domain,a):
+        '''
+        this method encapsulates DummyRelationshipAppearance method and DummyLabelAppearance
+        to generate Appearance part and Label parts
+        '''
         visualObj = CContainer()
         labels=[]
         for child in root:
@@ -209,6 +246,9 @@ class AppearanceGenerator(object):
         return tmp 
     
     def DummyLabelAppearance(self,root):
+        '''
+        Labels in relationship are a bit autonomous part at the moment, so they are generated separately
+        '''
         if root.tag.split("}")[1] not in ALL:
             raise FactoryError("XMLError", root.tag)
         

@@ -1,13 +1,11 @@
 from lib.Math2D import CPoint, CPolyLine, CLine
 from math import pi, sqrt
-#from CacheableObject import CCacheableObject
 from DrawingContext import DrawingContext
 import weakref
 
 class EConLabelInfo(Exception): pass
 
-#class CConLabelInfo(CCacheableObject):
-class ConLabelInfo():
+class ConLabelInfo(object):
     '''
     Stores information about graphical representation of label
     '''
