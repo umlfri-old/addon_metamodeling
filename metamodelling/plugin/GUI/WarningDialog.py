@@ -14,6 +14,9 @@ except:
     sys.exit(1)    
 
 class WarningDialog(gtk.Dialog):
+    '''
+    very simple WarningDialog used to a nicer way how to inform user
+    '''
     def __init__(self,message): 
         super(WarningDialog, self).__init__("UML .FRI Warning")
         self.set_size_request(350,130)

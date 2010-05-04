@@ -1,6 +1,6 @@
 <ElementType id="ObjectStakeholder" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
     <Icon path="icons/ObjectStakeholder.png"/>
-    <Domain id="ObjectStakeholder"/>
+    <Domain id="ObjectStakeholder" identity="visual_identity"/>
     <Connections>
         <Item value="Relationship"/>
         <Item value="RelationshipStakeholder"/>

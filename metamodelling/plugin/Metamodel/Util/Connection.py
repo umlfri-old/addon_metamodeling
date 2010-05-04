@@ -1,16 +1,14 @@
 from lib.Exceptions.UserException import *
 from lib.config import config
-from lib.Connections.Object import CConnectionObject
+from ConnectionObject import ConnectionObject
 from lib.Math2D import CPoint, CLine, CPolyLine, CRectangle
 from math import sqrt, atan2, pi
 from CacheableObject import CacheableObject
-#from SelectableObject import CSelectableObject
 from ConLabelInfo import ConLabelInfo
 from lib.consts import LABELS_CLICKABLE
 from DrawingContext import DrawingContext
 import weakref
 
-#class Connection(CCacheableObject, CSelectableObject):
 class Connection(CacheableObject):
     '''Graphical representation of connection
     
@@ -92,13 +90,6 @@ class Connection(CacheableObject):
         for lbl in self.labels.values():
             lbl.SetPosition(pos.pop(0),canvas)
 
-#    def Deselect(self):
-#        '''Execute L{CSelectableObject.Deselect<CSelectableObject.Deselect>} 
-#        and L{self.DeselectPoint<self.DeselectPoint>}
-#        '''
-#        CSelectableObject.Deselect(self)
-#        self.DeselectPoint()
-        
     def SelectPoint(self, index):
         '''set self.selpoint to index if index within range
         
@@ -458,15 +449,6 @@ class Connection(CacheableObject):
         for lbl in self.labels.values():
             lbl.Paint(canvas, delta)
         
-#        if self.selected is True:
-#            size = config['/Styles/Selection/PointsSize']
-#            color = config['/Styles/Selection/PointsColor']
-#            dx, dy = delta
-#            for index, i in enumerate(self.GetPoints(canvas)):
-#                canvas.DrawRectangle((i[0] + dx - size//2, i[1] + dy - size//2), (size, size), color)
-#            for label in self.labels.values():
-#                canvas.DrawRectangle(label.GetPosition(canvas), label.GetSize(canvas), color)
-
     def RemovePoint(self, canvas, index, runValidation = True):
         '''
         Delete point from polyline and colapse two neighbouring segments of 

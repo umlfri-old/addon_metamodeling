@@ -18,6 +18,9 @@ if HAVE_LXML:
     xmlschema = etree.XMLSchema(xmlschema_doc)
 
 class PathFactory(object):
+    '''
+    loads the content of paths.xml file
+    '''
     def __init__(self, path):
         #self.storage = storage
         self.paths = {}
@@ -34,15 +37,22 @@ class PathFactory(object):
             if element.tag == METAMODEL_NAMESPACE + 'Path':
                 self.paths[element.get('id')] = Path(element.get('path'))
     
-    #return path by id
     def GetPath(self, id):
+        '''
+        return path by id
+        '''
         return self.paths[id]
     
-    #return path items
     def GetPaths(self):
+        '''
+        return path items
+        '''
         return self.paths.items()
     
     def GetContent(self):
+        '''
+        return content data
+        '''
         return self.content
     
     

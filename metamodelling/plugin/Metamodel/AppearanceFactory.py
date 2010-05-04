@@ -14,22 +14,45 @@ except:
     sys.exit(1)    
 
 class BaseElement(object):
+    '''
+    base class for inheritance of visual parts like Rectangle and so on
+    @ivar attribs: dict of attributes which in latter phase will be converted into XML tag 
+    '''
     def __init__(self):
         self.attribs = dict()
     
     def GetAttributes(self):
+        '''
+        common method for getting attribs
+        @return: attribs dictionary
+        @rtype: dict
+        '''
         return self.attribs
     
     def GetAttributesKeySet(self):
+        '''
+        common method for getting list of attributes
+        @rtype: list
+        '''
         return self.attribs.keys()
     
     def SetAttribute(self,name,value):
+        '''
+        append an attribute with a name and value into list
+        '''
         self.attribs[name]=value
     
     def Identity(self):
+        '''
+        returns its own identity identifier
+        @rtype: str
+        '''
         return "BaseElement"    
     
 class Align(BaseElement):
+    '''
+    Align is used to align content to center or sides
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["align"]=""
@@ -37,6 +60,9 @@ class Align(BaseElement):
         return "Align"     
 
 class Condition(BaseElement):
+    '''
+    Condition is used to evaluate an expression, if result is True, subcontent is loader, else not
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["condition"]="True"
@@ -44,6 +70,9 @@ class Condition(BaseElement):
         return "Condition" 
         
 class Default(BaseElement):
+    '''
+    Default is used to set default textfont or textcolor
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["textfont"]=""
@@ -53,6 +82,9 @@ class Default(BaseElement):
         return "Default" 
         
 class Diamond(BaseElement):
+    '''
+    Diamond is visual representation of diamond-like element, which can be filled and bordered
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["fill"]=""
@@ -62,6 +94,9 @@ class Diamond(BaseElement):
         return "Diamond" 
 
 class Ellipse(BaseElement):
+    '''
+    Diamond is visual representation of ellipse-like element, which can be filled and bordered
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["fill"]=""
@@ -71,6 +106,9 @@ class Ellipse(BaseElement):
         return "Ellipse" 
         
 class HBox(BaseElement):
+    '''
+    HBox is a container, which can own multiple visual parts under it. HBox organizes child elements into one column
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["expand"]=""
@@ -79,6 +117,9 @@ class HBox(BaseElement):
         return "HBox" 
 
 class Icon(BaseElement):
+    '''
+    Icon defines a possible additional icon, see Package.xml file for further example
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["filename"]=""
@@ -87,6 +128,9 @@ class Icon(BaseElement):
         return "Icon" 
 
 class Line(BaseElement):
+    '''
+    Line defines a line, which type could be for instance horizontal, vertical,..
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["type"]="auto"
@@ -96,6 +140,9 @@ class Line(BaseElement):
         return "Line"   
 
 class Loop(BaseElement):
+    '''
+    Loop defines an iterable collection through which we can iterate
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["collection"]="None"
@@ -104,6 +151,9 @@ class Loop(BaseElement):
         return "Loop" 
         
 class Padding(BaseElement):
+    '''
+    Padding defines internal intendation
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["padding"]=0
@@ -112,6 +162,9 @@ class Padding(BaseElement):
         return "Padding" 
 
 class Proportional(BaseElement):
+    '''
+    Proportional is important when defining circle from ellipse by changing ratio in this element
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["ratio"]=""
@@ -122,6 +175,9 @@ class Proportional(BaseElement):
         return "Proportional" 
 
 class Rectangle(BaseElement):
+    '''
+    Rectangle is one of most used elements, by Path definition we are able to change corners or sides
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["fill"]=""
@@ -139,6 +195,9 @@ class Rectangle(BaseElement):
         return "Rectangle" 
 
 class Shadow(BaseElement):
+    '''
+    Shadow is being drawed in south-eastern corner of an element. Distance is defined by padding attribute
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["padding"]=5
@@ -148,6 +207,9 @@ class Shadow(BaseElement):
         return "Shadow" 
 
 class Sizer(BaseElement):
+    '''
+    Sizer is especially for defining size constraints or default width and height
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["minwidth"]=0
@@ -161,6 +223,9 @@ class Sizer(BaseElement):
         return "Sizer" 
 
 class Svg(BaseElement):
+    '''
+    Svg supports a scalable vector graphics extension
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["width"]=0
@@ -171,6 +236,9 @@ class Svg(BaseElement):
         return "Svg" 
 
 class Switch(BaseElement):
+    '''
+    by using Switch - Case we can switch between different cases of "value" attribute
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["value"]="None"
@@ -179,10 +247,12 @@ class Switch(BaseElement):
         return "Switch" 
 
 class TextBox(BaseElement):
+    '''
+    TextBox is a classic text which appears in canvas. This element is also known as a Label-type one
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["text"]="some text"
-        #self.attribs["linestart"]=""
         self.attribs["color"]="black"
         self.attribs["font"]="Arial 10"
         
@@ -190,6 +260,9 @@ class TextBox(BaseElement):
         return "TextBox" 
 
 class VBox(BaseElement):
+    '''
+    VBox organizes child elements like HBox, but in one row
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["expand"]=""
@@ -198,6 +271,9 @@ class VBox(BaseElement):
         return "VBox" 
     
 class ConnectionArrow(BaseElement):
+    '''
+    ConnectionArrow is used in Relationship definition only. index values -1 or 0 determines on which side of connection is arrow drawn
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["index"]=-1
@@ -211,6 +287,9 @@ class ConnectionArrow(BaseElement):
         return "ConnectionArrow"
     
 class ConnectionLine(BaseElement):
+    '''
+    ConnectionLine is also used in relationship definition only like in ConnectionArrow case. Defines a connection line between two Objects
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["color"]="black"
@@ -221,6 +300,9 @@ class ConnectionLine(BaseElement):
         return "ConnectionLine"  
     
 class Label(BaseElement):
+    '''
+    Label is used in relationship definition only and its position is one of center, source, destination (and +/-, i.e. source+1)
+    '''
     def __init__(self):
         BaseElement.__init__(self) 
         self.attribs["position"]="center"
@@ -229,6 +311,9 @@ class Label(BaseElement):
         return "Label"   
     
 class Case(BaseElement):
+    '''
+    Case is used with Switch in combination
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["type"]="equal"
@@ -239,6 +324,9 @@ class Case(BaseElement):
         return "Case"  
     
 class G(BaseElement):
+    '''
+    G is subelement of Svg
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["id"]=""
@@ -249,6 +337,9 @@ class G(BaseElement):
         return "g"     
     
 class Path(BaseElement):
+    '''
+    Path is subelement of Svg
+    '''
     def __init__(self):
         BaseElement.__init__(self)
         self.attribs["id"]=""
@@ -260,7 +351,11 @@ class Path(BaseElement):
         return "path"            
 
 class AppearanceFactory(object):
-          
+    '''
+    AppearanceFactory is a realization of mechanism described in Factory method desing pattern
+    It has only one method which returns instance of object, which depends on input string.
+    Input string doesnt necessarily match Identity method, but it is recommended
+    '''      
     @staticmethod
     def CreateElement(objectType):
         if (objectType=="Align"):

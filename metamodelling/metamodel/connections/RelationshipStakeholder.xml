@@ -1,6 +1,6 @@
 <ConnectionType xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="RelationshipStakeholder">
     <Icon path="icons/relationshipStakeholder.png"/>
-    <Domain id="RelationshipStakeholder" identity="name"/>
+    <Domain id="RelationshipStakeholder" identity="visual_identity"/>
     
     <Appearance>
         <ConnectionLine style="solid" color="##20fa20"/>

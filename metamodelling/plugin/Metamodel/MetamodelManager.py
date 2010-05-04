@@ -27,12 +27,18 @@ class Singleton(type):
         return cls.instance
 
 class MetamodelManager(object):
+    '''
+    Class, which controls all the logic of a visual representation of both objects and relationships
+    '''
     __metaclass__ = Singleton
     def __init__(self):
         self.metamodels = dict()
         self.metamodelsRel = dict()
         
-    def ShowEditWindow(self,selected,project):    
+    def ShowEditWindow(self,selected,project): 
+        '''
+        from this method is EditWindow showed.
+        '''   
         if (self.metamodels.has_key(selected.GetObject().GetValue(VISUAL_IDENTITY))or
         self.metamodelsRel.has_key(selected.GetObject().GetValue(VISUAL_IDENTITY))):
             if selected.GetObject().GetType()=='Object':
@@ -55,14 +61,18 @@ class MetamodelManager(object):
                 EditWindow(self,self.__GetRelatedElement(project, selected),project,'Relationship',visual_identity = selected.GetObject().GetValue(VISUAL_IDENTITY))        
     
     def GenerateMetamodels(self,project,projectname,zipfile=None):
+        '''
+        method used to generate metamodels and complementary stuff
+        '''
         ComplementaryGenerator.CopyDummyProjectIcon(projectname,zipfile)
         elementDomainMap = self.__GetUniqueElements(project)
         for el in self.metamodels.keys():
             domainname = elementDomainMap.get(el).GetValue(OBJECT_IDENTITY)
             relationships = self.__GetRelationshipsForElement(project, el)
+            print el
+            print relationships
             ObjectVisualGenerator.GenerateObject(projectname,el,self.metamodels.get(el),domainname,relationships,zipfile)
             ComplementaryGenerator.CopyDummyObjectIcon(projectname,el,zipfile)
-        #print self.__GetUniqueRelationships(project)
         relationshipDomainMap = self.__GetUniqueRelationships(project)
         for conn in self.metamodelsRel.keys():
             domainname = relationshipDomainMap.get(conn).GetValue(RELATIONSHIP_IDENTITY)
@@ -81,6 +91,9 @@ class MetamodelManager(object):
         ComplementaryGenerator.CopyPackageItems(projectname,zipfile)
         
     def __GetDomainForElement(self,project,visual_id):
+        '''
+        for Object or ObjectRelationship returns domain(data) on which the visual_id points
+        '''
         if (project is not None):
             for diag in project.GetRoot().GetDiagrams():
                 diagelements = diag.GetElements()
@@ -90,6 +103,9 @@ class MetamodelManager(object):
                         return elobj.GetValue(OBJECT_IDENTITY)
            
     def __GetRelationshipsForElement(self,project,visual_id):
+        '''
+        returns set of relationship connected with element
+        '''
         relationships = dict()
         if (project is not None):
             for diag in project.GetRoot().GetDiagrams():
@@ -99,10 +115,12 @@ class MetamodelManager(object):
                     if (((conn.GetObject().GetType()=='Relationship')or
                          (conn.GetObject().GetType()=='RelationshipStakeholder'))and
                         (
-                        ((conn.GetSourceObject().GetType()=='Object') and
+                        (((conn.GetSourceObject().GetType()=='Object')or
+                         (conn.GetSourceObject().GetType()=='ObjectStakeholder')) and
                         (conn.GetSourceObject().GetValue(VISUAL_IDENTITY)==visual_id))
                         or
-                        ((conn.GetDestinationObject().GetType()=='Object') and
+                        (((conn.GetDestinationObject().GetType()=='Object')or
+                         (conn.GetDestinationObject().GetType()=='ObjectStakeholder')) and
                         (conn.GetDestinationObject().GetValue(VISUAL_IDENTITY)==visual_id))
                         )
                         ):
@@ -111,6 +129,9 @@ class MetamodelManager(object):
         return relationships.keys()
     
     def __GetRelatedElement(self,project,selected):
+        '''
+        for stakeholder types gets the element with a data on which stakeholder points
+        '''
         if selected.GetObject().GetType()=='ObjectStakeholder':
             if (project is not None):
                 for diag in project.GetRoot().GetDiagrams():
@@ -133,8 +154,10 @@ class MetamodelManager(object):
         print 'non match'
         return None
     
-    # returns dict of visual_identity:domain_object
     def __GetUniqueElements(self,project):
+        '''
+        returns dict of visual_identity:domain_object
+        '''
         elements = dict()
         if (project is not None):
             for diag in project.GetRoot().GetDiagrams():
@@ -149,8 +172,10 @@ class MetamodelManager(object):
                             elements[el.GetObject().GetValue(VISUAL_IDENTITY)]=el1.GetObject()
         return elements
     
-    # returns dict of visual_identity:domain_object
     def __GetUniqueRelationships(self,project):
+        '''
+        returns dict of visual_identity:domain_object
+        '''
         relationships = dict()
         if (project is not None):
             for diag in project.GetRoot().GetDiagrams():

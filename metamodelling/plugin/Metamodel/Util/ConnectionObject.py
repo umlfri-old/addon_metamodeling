@@ -3,7 +3,7 @@ from DomainObject import DomainObject
 
 import weakref
 
-class ConnectionObject():
+class ConnectionObject(object):
     """
     Object that represents logical connection and its properties
     """

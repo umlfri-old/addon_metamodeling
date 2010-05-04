@@ -1,12 +1,9 @@
 from lib.Exceptions.UserException import *
 import weakref
 from DomainObject import DomainObject
-#from Alias import CElementAlias
 from lib.consts import DEFAULT_IDENTITY
-#from lib.Base import CBaseObject
 
-#class CElementObject(CBaseObject):
-class ElementObject():
+class ElementObject(object):
     """
     Object that represents logical element and its properties
     """
@@ -46,38 +43,7 @@ class ElementObject():
         
         self.revision += 1
     
-#    def GetAppears(self):
-#        """
-#        Get list of object appearances on diagrams
-#        
-#        @return: list of diagrams
-#        @rtype:  iterator over L{CDiagram<lib.Drawing.Diagram.CDiagram>}
-#        """
-#        for i in self.appears:
-#            yield i()
-
-#    def AddAppears(self, diagram):
-#        """
-#        Add element appearance
-#        
-#        @param diagram: Diagram on which element appears
-#        @type  diagram: L{CDiagram<lib.Drawing.Diagram.CDiagram>}
-#        """
-#        self.appears.append(weakref.ref(diagram))
-#
-#    def RemoveAppears(self, diagram):
-#        """
-#        Remove element appearance
-#        
-#        @param diagram: Diagram on which element was appearing
-#        @type  diagram: L{CDiagram<lib.Drawing.Diagram.CDiagram>}
-#        
-#        @raise ValueError: if given diagram is not found
-#        """
-#        for id, value in enumerate(self.appears):
-#            if value() is diagram:
-#                del self.appears[id]
-#    
+   
     def GetPath(self):
         """
         Get path of this element object in the project

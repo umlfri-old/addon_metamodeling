@@ -21,9 +21,13 @@ XML_HEAD = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 DOMAIN_IDENTITY = "name"
 
 class ObjectVisualGenerator(object):
-       
+    '''
+    Class for generating visual representation of an object
+    '''   
     def GenerateObject(projectname,visual_identity,treemodel,domainname,relationships,zipfile=None):
-        
+        '''
+        static method intended for XML output creation
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
         object = A.ElementType()

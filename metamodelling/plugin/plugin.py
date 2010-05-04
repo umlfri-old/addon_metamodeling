@@ -10,8 +10,18 @@ import random
 import gtk
 from zipfile import ZipFile,ZIP_DEFLATED
 
+
 class Plugin(object):
+    '''
+    Entrance point into module
+    @ivar projectname: defines name of project which we work on
+    @ivar metamanager: Singleton of MetamodelManager() to manage metamodel data
+    '''
     def __init__(self,interface):
+        '''
+        Create new instance of Metamodelling object
+        @param interface: interface object sent from a plug-in core system 
+        '''
         self.interface = interface
         self.interface.SetGtkMainloop()
         self.projectname = None
@@ -30,6 +40,10 @@ class Plugin(object):
             pass
             
     def GenerateDomain(self,*args):
+        '''
+        Generates domain, so that is full data background of new metamodel
+        but no visual representation is within this method created
+        '''
         actProject = self.interface.GetAdapter().GetProject()
         if (actProject is not None):
             self.projectname = self.__GetProjectName()
@@ -40,6 +54,9 @@ class Plugin(object):
         generator.GenerateDomains()
     
     def GenerateMetamodel(self,*args):
+        '''
+        Generates visual representation of data background
+        '''
         actProject = self.interface.GetAdapter().GetProject()
         if (actProject is not None):
             self.projectname = self.__GetProjectName()
@@ -49,6 +66,10 @@ class Plugin(object):
         self.metamanager.GenerateMetamodels(actProject,self.projectname)
     
     def Generate(self,*args):
+        '''
+        Saves entire project as FRI Addon
+        that means zip packed file with .fria extension
+        '''
         dialog = gtk.FileChooserDialog("Save..",
                                        None,
                                        gtk.FILE_CHOOSER_ACTION_SAVE,
@@ -83,14 +104,17 @@ class Plugin(object):
         elif response == gtk.RESPONSE_CANCEL:
             pass
         dialog.destroy()
-#        if (self.Validate(self)):
-#            self.GenerateDomain(self,*args)
-#            self.GenerateMetamodel(self,*args)
     
     def Validate(self):
+        '''
+        Validation method for future restrictions
+        '''
         return True
     
     def SetVisualIdentity(self,*args):
+        '''
+        Method for making a pair of data and visual representation of Object or Relationship type
+        '''
         actProject = self.interface.GetAdapter().GetProject()
         if (actProject is not None):
             self.projectname = self.__GetProjectName()
@@ -100,10 +124,20 @@ class Plugin(object):
         if (selItem is not None): self.metamanager.ShowEditWindow(self.__GetSelectedItem(),actProject)
         
     def __GetProjectName(self):
+        '''
+        private method encapsulating the way how to get projectname
+        @return: name of project under construction
+        @rtype: str
+        '''
         return self.interface.GetAdapter().GetProject().GetRoot().GetName()  
     
     #if there is more than one item selected, fail
     def __GetSelectedItem(self):  
+        '''
+        private method used to get selected item
+        @return: selected item
+        @rtype: various
+        '''
         if (len(self.interface.GetAdapter().GetCurrentDiagram().GetSelected()) == 1):
             return self.interface.GetAdapter().GetCurrentDiagram().GetSelected()[0]
         else:

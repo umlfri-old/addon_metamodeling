@@ -3,7 +3,7 @@ from lib.Exceptions.UserException import *
 #from lib.Base import CBaseObject
 import weakref
 
-class ElementType():
+class ElementType(object):
     '''
     Scheme for a class of elements
     '''
@@ -149,12 +149,6 @@ class ElementType():
         set relative path to the icon
         '''
         self.icon = pixbuf
-    
-#    def SetId(self, id):
-#        '''
-#        set identifier / name of the current element type
-#        '''
-#        self.id = id
     
     def GetSize(self, context):
         '''

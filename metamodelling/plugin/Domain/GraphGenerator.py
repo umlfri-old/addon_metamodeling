@@ -23,9 +23,13 @@ ICON_PATH = "icons/"
 META_IDENTITY = "visual_identity"
 
 class GraphGenerator(object):
-       
+    '''
+    generator for generating Graph/Diagram data background on the file system
+    '''   
     def GenerateGraph(projectname,obj,zipfile=None):
-        
+        '''
+        entrance point into graph generation
+        '''
         A = ElementMaker(namespace=NMS_METAMODEL,
                           nsmap={None : NMS_METAMODEL})
         object = A.DiagramType()
@@ -74,14 +78,17 @@ class GraphGenerator(object):
         f.writelines(tostring(object,encoding=None,method="xml",pretty_print=True))
         f.close()
      
-    #staticka metoda    
+    #static method    
     GenerateGraph = Callable(GenerateGraph)    
     
     def __GetUniqueObjectsFromDiagram(diag):
+        '''
+        gets unique visual_id keys for Object and ObjectStakeholder types
+        '''
         #v buducnosti z toho moze byt aj filter, pripadne validator, minimalne ak pridam ine elementy
         mydict = dict()
         for it in diag.GetElements():
-            if (it.GetObject().GetType()=="Object"):
+            if ((it.GetObject().GetType()=="Object")or(it.GetObject().GetType()=="ObjectStakeholder")):
                 if (mydict.has_key(it.GetObject().GetValue(META_IDENTITY))==False):
                     mydict[it.GetObject().GetValue(META_IDENTITY)]=it.GetObject()
                 #mydict.items().append(eval('{\"it.GetObject().GetValue(META_IDENTITY)\":it.GetObject()}'))        
@@ -89,7 +96,10 @@ class GraphGenerator(object):
     
     __GetUniqueObjectsFromDiagram = Callable(__GetUniqueObjectsFromDiagram)
     
-    def __GetUniqueRelationshipsFromDiagram(diag):     
+    def __GetUniqueRelationshipsFromDiagram(diag):  
+        '''
+        gets unique visual_id keys for Relationship and RelationshipStakeholder types
+        '''   
         #v buducnosti z toho moze byt aj filter, pripadne validator, minimalne ak pridam ine spojenia
         mydict = dict()
         for it in diag.GetConnections():

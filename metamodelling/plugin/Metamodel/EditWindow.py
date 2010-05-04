@@ -31,6 +31,10 @@ except:
 
 
 class ContextMenu(gtk.Menu):
+    '''
+    main contextmenu. used when generating Objects
+    for Relationship modelling use ContextMenuLine instead
+    '''
     def __init__(self, t):
         gtk.Menu.__init__(self)
         self.t = t
@@ -68,21 +72,37 @@ class ContextMenu(gtk.Menu):
         self.show_all()
 
     def add(self,widget,string):
+        '''
+        add action is fired when one item from context menu is selected
+        '''
         parent = self.t.treestore.append(self.t.treeview.get_selection().get_selected()[1])
         item = AppearanceFactory.CreateElement(string)
         self.t.treestore.set(parent,0,item.Identity(),1,item)
         
     def __GetSubMenuItems(self):
+        '''
+        list of items to construct submenu
+        '''
         return ['Align','Condition','Default','Diamond','Ellipse','HBox','Icon','Line','Loop','Padding','Proportional','Rectangle','Shadow','Sizer','Svg','Switch','TextBox','VBox']
     
     def __GetSvgItems(self):
+        '''
+        Svg has only option for two subelements, so if Svg is selected, this is the content of its submenu
+        '''
         return ['G','Path']
     
     def menuitem_remove(self, widget,string):
+        '''
+        action fired when clicked on remove option
+        '''
         item = self.t.treeview.get_selection().get_selected()[1]
         self.t.treestore.remove(item)
 
 class ContextMenuLine(gtk.Menu):
+    '''
+    context menu used for relationship modelling
+    when modelling objects, use ContextMenu instead
+    '''
     def __init__(self, t):
         gtk.Menu.__init__(self)
         self.t = t
@@ -140,29 +160,50 @@ class ContextMenuLine(gtk.Menu):
         self.show()
 
     def add(self,widget,string):
+        '''
+        add action is fired when one item from context menu is selected
+        '''
         parent = self.t.treestore.append(self.t.treeview.get_selection().get_selected()[1])
         item = AppearanceFactory.CreateElement(string)
         self.t.treestore.set(parent,0,item.Identity(),1,item)
     
     def addRoot(self,widget,string):
+        '''
+        this action adds more items into root. It cannot be done by gtk.TreeView alone, because of lack of its functionality
+        '''
         item = AppearanceFactory.CreateElement(string)
         parent = self.t.treestore.append(None)
         self.t.treestore.set(parent,0,item.Identity(),1,item)
         
     def __GetSubMenuItems(self):
+        '''
+        list of items to construct submenu
+        '''
         return ['Align','Condition','Default','Diamond','Ellipse','HBox','Icon','Line','Loop','Padding','Proportional','Rectangle','Shadow','Sizer','Svg','Switch','TextBox','VBox']
     
     def __GetSubMenuItemsRoot(self):
+        '''
+        submenu items when extending the root
+        '''
         return ['Label']+self.__GetSubMenuLineSpecial()
     
     def __GetSubMenuLineSpecial(self):
+        '''
+        this list is a submenu of Condition, Loop and Case
+        '''
         return ['ConnectionArrow','ConnectionLine','Condition','Loop','Shadow','Switch']
     
     def menuitem_remove(self, widget,string):
+        '''
+        action fired when clicked on remove option
+        '''
         item = self.t.treeview.get_selection().get_selected()[1]
         self.t.treestore.remove(item)
 
 class EditWindow(object):
+    '''
+    EditWindow is a visual part for editing Object and Relationship objects
+    '''
     def __init__(self,manager,selected,project,type,treestore=None,visual_identity=None):
         self.manager = manager
         self.selected = selected
@@ -211,6 +252,9 @@ class EditWindow(object):
         gtk.main()
         
     def __ConstructBasicLayout(self):
+        '''
+        construct the basic layout in which other parts are inserted
+        '''
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title("Metamodel Editor for "+str(self.type))
         self.window.set_size_request(800,600)
@@ -224,6 +268,9 @@ class EditWindow(object):
         self.window.add(self.vbox)    
         
     def __ConstructLeftTW(self):
+        '''
+        method used to construct left TreeView
+        '''
         leftvbox = gtk.VBox()
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
@@ -255,21 +302,24 @@ class EditWindow(object):
         self.hbox.pack_start(leftvbox)       
         
     def __ConstructCanvas(self):
-        #canvas for previews
+        '''
+        canvas for previews
+        '''
         self.canvas = gtk.DrawingArea()
-        self.canvas.set_size_request(400,600)
-       
+        self.canvas.set_size_request(400,600)       
         self.hbox.pack_start(self.canvas)
+
         
     def PaintSelf(self):
+        '''
+        method used to repaint the upper middle part (preview)
+        '''
         canvasarea = self.canvas.window
         
         if (self.type=="Object"):
             self.appearanceGenerator.SetTreeView(self.treeview.get_model())
             domaintype = DomainType("bulk")
-            #self.domaintype = self.selected.GetObject().GetDomainType()
-            #domaintype.AppendAttribute("object_name","object_name",type="str",default="kex")
-        
+                   
             a = FakeFactory()
 
             cairo = CairoCanvas(self.canvas)
@@ -323,21 +373,38 @@ class EditWindow(object):
         else: print "uncompatible type"
         
     def __FakeElement(self):
+        '''
+        creates a fake appearance of element for preview
+        '''
         return AppearanceGenerator().GenerateXML()
     
     def __FakeElementForRelationship(self):
+        '''
+        creates a preview element, which is used twice for relationship preview 
+        at both its ends
+        '''
         return AppearanceGenerator().GenerateSampleRounded()
     
     def __FakeRelationship(self):
+        '''
+        creates a preview relationship 
+        '''
         return AppearanceGenerator().GenerateRelationshipXML()
         
     def __ConstructRightTW(self):
+        '''
+        basic structure of Properties part of a window
+        '''
         self.twProperties = gtk.TreeView()
         self.hbox.pack_end(self.twProperties)  
         
     def __ConstructPaths(self):
+        '''
+        Paths are the list from paths.xml representing vector curves
+        '''
         myVBox = gtk.VBox()
         scrolled = gtk.ScrolledWindow()
+        scrolled.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)
         myVBox.pack_start(scrolled, True, True, 0)
         scrolled.show()
         
@@ -369,9 +436,13 @@ class EditWindow(object):
         self.hboxBottom.pack_start(myVBox) 
         
     def __ConstructDomains(self):
+        '''
+        domains part of the window is in the centre of bottom part of hbox
+        '''
         self.domainsTree = gtk.TreeView(self.domainsTreeStore)
         self.domainsTree.get_selection().set_mode(gtk.SELECTION_SINGLE)
         scrolled = gtk.ScrolledWindow()
+        scrolled.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)
         scrolled.set_size_request(300,130)
         self.hboxBottom.pack_start(scrolled,True,True,0)
         scrolled.show()
@@ -395,14 +466,16 @@ class EditWindow(object):
             newitem = self.domainsTreeStore.append(None)
             self.domainsTreeStore.set(newitem,0,key,1,value)
         
-        scrolled.add_with_viewport(self.domainsTree)
-        
-        #self.hboxBottom.pack_start(self.domainsTree)   
+        scrolled.add_with_viewport(self.domainsTree) 
     
     def __ConstructHints(self):
+        '''
+        hints are situated in the right end of bottom hbox part
+        '''
         self.hboxBottomRight=gtk.VBox()
         scrolled = gtk.ScrolledWindow()
         self.hboxBottomRight.pack_start(scrolled, True, True, 0)
+        scrolled.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)
         scrolled.show()
         simpleListStore = gtk.ListStore(str)
         hintsTree = gtk.TreeView(simpleListStore)
@@ -424,11 +497,13 @@ class EditWindow(object):
             simpleListStore.set(newit,0,it)       
         
         scrolled.add_with_viewport(hintsTree)
-        #self.hboxBottomRight.set_size_request(150,130)
         self.hboxBottomRight.show()
         self.hboxBottom.pack_end(self.hboxBottomRight)    
     
     def __ConstructButtons(self):
+        '''
+        there are currently two buttons created: Close and Save
+        '''
         hbutbox = gtk.HButtonBox()
 
         close = gtk.Button("Close")
@@ -441,11 +516,17 @@ class EditWindow(object):
         self.hboxBottomRight.pack_end(hbutbox)          
     
     def close(self,param):
+        '''
+        Closes the window and destroys it
+        '''
         self.window.destroy()
     
     #self.visual_identity je kvoli tomu, ze ak podhodim zastupcu, tak najdem jeho realny element, ale 
     #ten moze mat inu hodnotu self.visual_identity. avsak domenove informacie sedia    
     def save(self,param):
+        '''
+        Saves the {visual_identity,representation} pair
+        '''
         if self.type == 'Object':
             if self.visual_identity is not None: self.manager.metamodels[self.visual_identity]=self.treestore
             else: self.manager.metamodels[self.selected.GetObject().GetValue(VISUAL_IDENTITY)]=self.treestore
@@ -456,6 +537,9 @@ class EditWindow(object):
             print self.manager.metamodelsRel
                 
     def on_button_press_event(self, widget, event):
+        '''
+        catches button_press event of main treeview
+        '''
         if (event is None): return       
         if event.button == 3 and event.type == gtk.gdk.BUTTON_PRESS:
             if (self.type=="Object"): c = ContextMenu(self)
@@ -463,6 +547,9 @@ class EditWindow(object):
             c.popup(None, None, None, event.button, event.get_time())           
             
     def on_cursor_changed(self, treeview):
+        '''
+        fired when a new element in main treeview is selected
+        '''
         ret = self.GetSelectedItem(treeview)
 
         self.SetPropertiesModel(ret)  
@@ -480,6 +567,9 @@ class EditWindow(object):
 
     
     def GetSelectedItem(self, widget):
+        '''
+        returns selected item from main treeview
+        '''
         if (widget is not None):
             test = gtk.TreeView()
             entry1, entry2 = widget.get_selection().get_selected()
@@ -487,6 +577,9 @@ class EditWindow(object):
             return entry
      
     def SetPropertiesModel(self, source):
+        '''
+        from selected item this method constructs the right table with data
+        '''
         self.tmpModel.clear()
         if (source is not None): 
             attr = source.GetAttributes().items()
@@ -516,6 +609,9 @@ class EditWindow(object):
         self.tvcolumnV.add_attribute(cell1, "text", 1)
     
     def __CreateRelationshipBase(self):
+        '''
+        this is base for a relationship (when there is no match in saved)
+        '''
         parent = self.treestore.append(None)
         itempar = AppearanceFactory.CreateElement('ConnectionArrow')
         self.treestore.set(parent,0,itempar.Identity(),1,itempar)
@@ -533,22 +629,31 @@ class EditWindow(object):
         self.treestore.set(quex6,0,item6.Identity(),1,item6)
          
     def value_edited(self,cell, path, new_text, user_data): 
-        print user_data 
+        '''
+        when a value from right table is edited, some action is needed to be performed
+        (like set the value into appropriate back-end object)
+        '''
         liststore, column = user_data
         column = 1
         liststore[path][column] = new_text
         
-        #teraz setnem hodnotu aj do backend objektu
+        #now i am gonna set the value into appropriate backend object
         self.GetSelectedItem(self.treeview).GetAttributes()[liststore[path][0]]=new_text
     
     def drag_data_get_data(self, treeview, context, selection, target_id,
                            etime):
+        '''
+        Drag n drop: get data from drag source
+        '''
         treeselection = treeview.get_selection()
         model, iter = treeselection.get_selected()
         data = model.get_value(iter, 0)
         selection.set(selection.target,8,data)
     
     def drag_data_received_data(self, widget, context, x, y, selection, info, etime):
+        '''
+        Drag n drop: set data into drag destination
+        '''
         if widget.get_dest_row_at_pos(x, y) is not None:
             path, pos = widget.get_dest_row_at_pos(x, y)
             model, iter_to_copy = widget.get_selection().get_selected()
@@ -561,6 +666,9 @@ class EditWindow(object):
                 context.finish(False, False, etime) 
                 
     def CheckSanity(self, model, iter_to_copy, target_iter):
+        '''
+        validation for drag n drop action
+        '''
         path_of_iter_to_copy = model.get_path(iter_to_copy)
         path_of_target_iter = model.get_path(target_iter)
         if path_of_target_iter[0:len(path_of_iter_to_copy)] == path_of_iter_to_copy:
@@ -571,6 +679,9 @@ class EditWindow(object):
             return True
     
     def IterCopy(self, treeview, model, iter_to_copy, target_iter, pos):
+        '''
+        method for copying items in treeview
+        '''
         new_pos_str=(model.get_string_from_iter(target_iter)).split(':')
         old_pos_str=(model.get_string_from_iter(iter_to_copy)).split(':')
         new_el_pos=int(new_pos_str[len(new_pos_str)-1])
