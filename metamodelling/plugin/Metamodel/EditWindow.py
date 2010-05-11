@@ -18,7 +18,6 @@ from Util.Element import Element
 from Util.Connection import Connection
 from Util.Cairo.CairoCanvas import CairoCanvas
 import pygtk
-from symbol import for_stmt
 pygtk.require('2.0')
 
 VISUAL_IDENTITY = "visual_identity"
