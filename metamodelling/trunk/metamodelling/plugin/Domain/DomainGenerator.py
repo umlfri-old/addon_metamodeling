@@ -6,7 +6,6 @@ Created on 21.3.2010
 from lib.Exceptions import *
 #import random
 from __init__ import *
-import io
 import os.path
 
 addonPath = "share/addons/"
@@ -65,23 +64,23 @@ class DomainGenerator(object):
             print "test Generate directories"
 
             if (not os.path.isdir(basicPath)):
-                io.os.mkdir(basicPath)
+                os.mkdir(basicPath)
             if (not os.path.isdir(basicPath+"/icons")):    
-                io.os.mkdir(basicPath+"/icons")
+                os.mkdir(basicPath+"/icons")
             if (not os.path.isdir(metaPath)):    
-                io.os.mkdir(metaPath)
+                os.mkdir(metaPath)
             if (not os.path.isdir(basicPath+"/templates")):    
-                io.os.mkdir(basicPath+"/templates")
+                os.mkdir(basicPath+"/templates")
             if (not os.path.isdir(metaPath+"/connections")):    
-                io.os.mkdir(metaPath+"/connections")
+                os.mkdir(metaPath+"/connections")
             if (not os.path.isdir(metaPath+"/diagrams")):    
-                io.os.mkdir(metaPath+"/diagrams")
+                os.mkdir(metaPath+"/diagrams")
             if (not os.path.isdir(metaPath+"/domains")):    
-                io.os.mkdir(metaPath+"/domains")
+                os.mkdir(metaPath+"/domains")
             if (not os.path.isdir(metaPath+"/elements")):    
-                io.os.mkdir(metaPath+"/elements")
+                os.mkdir(metaPath+"/elements")
             if (not os.path.isdir(metaPath+"/icons")):    
-                io.os.mkdir(metaPath+"/icons")
+                os.mkdir(metaPath+"/icons")
         except Exception:
             print "Directories were not generated"
             return    
