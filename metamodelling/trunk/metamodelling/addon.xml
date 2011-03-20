@@ -22,7 +22,6 @@
         
 		<Plugin>
 			<Code os="all" language="python" path="plugin" />
-			<Metamodel required="urn:umlfri.org:metamodel:metamodelling" />
 		</Plugin>
     </Composite>
     
