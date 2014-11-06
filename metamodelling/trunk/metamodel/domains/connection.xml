@@ -1,58 +1,17 @@
 <Domain id="connection" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" >
     <Attribute id="name" name="Name" >
 		<Str/>
-	</Attribute>
-    <Attribute id="icon" name="Icon" hidden="true">
-		<Str default="icons/element.png"></Str>
-	</Attribute>
-	<Attribute id="attributes" name="Attributes" >
+	</Attribute> 
+	<Attribute id="icon" name="Icon" >
+		<Str default="icons/connection.png"></Str>
+	</Attribute>   
+    <Attribute id="attributes" name="Attributes" >
 		<List>
         	<Domain>
-        	    <Attribute id="attName" name="Name" >
+        	    <Attribute id="value" name="Value" >
 					<Str/>
 				</Attribute>
-				<Attribute id="attType" name="Type" >
-                    <Enum>
-			            <Value>Bool</Value>
-	                    <Value>Float</Value>
-	                    <Value>Int</Value>
-	                    <Value>Str</Value>
-	                    <Value>Text</Value>
-		            </Enum>
-                </Attribute>
-                <Attribute id="default" name="Default" >
-		            <Str/>
-	            </Attribute>
         	</Domain>
 		</List>
     </Attribute>
-    <Attribute id="enums" name="Enum" >
-		<List>
-        	<Domain>
-        	    <Attribute id="enumName" name="Name" >
-					<Str/>
-				</Attribute>
-				<Attribute id="enumValues" name="Values" >
-		            <List>
-		                <Domain>
-		                    <Parse separator="," />
-		                    <Attribute id="value" name="Value">
-		                        <Str />
-		                    </Attribute>
-		                    
-		                    <Parse regexp="
-		              	    	   	[ ]* ( \[ (?P&lt;scope&gt; (in|out|in[ ]out) ) \])? 
-		              	    	   	[ ]* (?P&lt;name&gt;[a-zA-Z_][a-zA-Z0-9_]*) 
-		              	    	   	[ ]* : [ ]* (?P&lt;type&gt; [a-zA-Z_][a-zA-Z0-9_]*) 
-		              	    		[ ]* ( = [ ]* (?P&lt;default&gt; .+? ) [ ]*$ )?" />
-		              	  		<Join joiner="#value "/>
-		                </Domain>
-		            </List>
-                </Attribute>
-        	</Domain>
-		</List>
-    </Attribute>
-    <Attribute id="note" name="Note" >
-		<Text/>
-	</Attribute>
 </Domain>

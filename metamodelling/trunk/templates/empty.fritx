@@ -13,14 +13,9 @@
   </objects>
   <connections/>
   <diagrams>    
-    <diagram id="1" type="Diagram editor">
+    <diagram id="1" type="Metamodel editor">
       <dict>
-        <text name="name">Diagram editor</text>
-      </dict>
-    </diagram>
-    <diagram id="2" type="Elements editor">
-      <dict>
-        <text name="name">Elements editor</text>
+        <text name="name">Metamodel editor</text>
       </dict>
     </diagram>
   </diagrams>
@@ -28,7 +23,6 @@
     <node id="0">
       <diagrams>
         <diagram id="1" default="true"/>
-        <diagram id="2" default="true"/>
       </diagrams>
     </node>
   </projecttree>

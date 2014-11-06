@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ElementType id="Test" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
-    <Icon path="icons/element.png" />
-    <Domain id="test" identity="name" />
+<ElementType id="Connection" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/connection.png" />
+    <Domain id="connection" identity="name" />
     <Connections>
-        <Item value="Compose" with="Diagram" allowrecursive="0"/>
-        <Item value="Agregation" with="Element" allowrecursive="0"/>
-        <Item value="Link" with="Connection" allowrecursive="1"/>
+        <Item value="Link" with="Element" allowrecursive="0"/>
     </Connections>
     <Appearance>
-        <Sizer minheight="80" minwidth="60"> 
-            <Rectangle fill="lightblue" border="#cfg.Styles.Element.LineColor">        
+        <Sizer minheight="80" minwidth="60">
+            <Rectangle fill="lightgreen" border="#cfg.Styles.Element.LineColor">
                 <HBox>
                     <Align align="center center">
                         <Icon filename="#self.icon" />
                     </Align>
-                    <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/> 
+                    <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/>
                     <Padding top="7" bottom="7">
                         <Align align="center">
                             <TextBox text="#self.name"></TextBox>
                         </Align>
                     </Padding>
                     <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/>
-                    <Loop collection="#self.attributes"> 
+                    <Loop collection="#self.attributes">
                         <VBox>
                             <Padding left="5">
-                                <TextBox text="#attName" color="#cfg.Styles.Element.TextColor"/>  
+                                <TextBox text="#attName" color="#cfg.Styles.Element.TextColor"/>
                             </Padding>
                                 <TextBox text=": " color="#cfg.Styles.Element.TextColor"/>
                                 <TextBox text="#attType" color="#cfg.Styles.Element.TextColor"/>
@@ -33,9 +31,9 @@
                                 <TextBox text="#default" color="#cfg.Styles.Element.TextColor"/>
                             </Padding>
                         </VBox>
-                    </Loop>           
+                    </Loop>
                 </HBox>
             </Rectangle>
-        </Sizer> 
+        </Sizer>
     </Appearance>
 </ElementType>

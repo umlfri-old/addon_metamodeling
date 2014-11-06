@@ -1,11 +1,12 @@
 import constants
 import gtk
+import os
 
 class ChooseConnections:
     def __init__(self, interface):
         self.i = interface
         self.dic = { "on_buttonCancel_clicked" : self.close, "on_buttonSave_clicked" : self.saveConnections }
-        gladefile = "choose_connections.glade"
+        gladefile = os.path.split(os.path.realpath(__file__))[0] + "/choose_connections.glade"
         self.closed = True
         self.wTree = gtk.glade.XML(gladefile) 
         self.window = self.wTree.get_widget("dialogChooseConnections")
