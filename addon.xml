@@ -1,30 +1,28 @@
 <?xml version="1.0" ?>
 <AddOn xmlns="http://umlfri.org/xmlschema/addon.xsd">
-    <Identity uri="urn:umlfri.org:metamodel:metamodeling" />
-
-    <FriendlyName name="Metamodeling" version="0.0.1" />
+    <Identity uri="urn:umlfri.org:plugin:metamodellingComposite" />
+    
+    <FriendlyName name="Metamodelling" version="0.1.1"/>
     <Author>
-        <Name name="Matej Jančura" />
-        <Homepage url="http://umlfri.org" />
-        
-        <CommonLicense name="GPL-3" />
+        <Name name="Michal Kováčik" />
+        <Homepage url="http://umlfri.org" /> 
+        <CommonLicense name="GPL-2" />
     </Author>
     
-    <Icon path="icons/metamodeling.png" />
+    <Icon path="icons/icon.png" />
     <Description>
-        Metamodel editor is a graphical tool for creating your own metamodels.
+        Metamodelling plug-in is a tool for creating your own diagrams and extending the editor.
     </Description>
-    <Dependencies>
-           <AddOn uri="urn:umlfri.org:starters:python" />
-    </Dependencies>
+    
     <Composite>
         <Metamodel>
             <Path path="metamodel" />
-            <Template path="templates/empty.fritx" name="Metamodeling" />
+            <Template path="templates/empty.fritx" name="Empty Graph" />
         </Metamodel>
-        <Plugin>
-            <Code os="all" language="pythonNew" path="plugin" />
-        </Plugin>
+        
+		<Plugin>
+			<Code os="all" language="python" path="plugin" />
+		</Plugin>
     </Composite>
-
+    
 </AddOn>

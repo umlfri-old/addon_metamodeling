@@ -1,36 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<umlproject xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/umlproject.xsd" saveversion="1.1.0">
+<umlproject xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/umlproject.xsd" saveversion="1.0.1">
   <metamodel>
-    <uri>urn:umlfri.org:metamodel:metamodeling</uri>
-    <version>0.0.1</version>
+    <uri>urn:umlfri.org:plugin:metamodellingComposite</uri>
+    <version>0.1.1</version>
   </metamodel>
   <objects>
     <object type="Package" id="0">
       <dict>
+        <text name="note"></text>
         <text name="name">Project</text>
       </dict>
     </object>
   </objects>
   <connections/>
-  <diagrams>    
-    <diagram id="1" type="Diagram editor">
-      <dict>
-        <text name="name">Diagram editor</text>
-      </dict>
-    </diagram>
-    <diagram id="2" type="Elements editor">
-      <dict>
-        <text name="name">Elements editor</text>
-      </dict>
-    </diagram>
-  </diagrams>
   <projecttree>
     <node id="0">
       <diagrams>
-        <diagram id="1" default="true"/>
-        <diagram id="2" default="true"/>
+        <diagram default="true" type="Graph" name="Graph 1"/>
       </diagrams>
     </node>
   </projecttree>
-  <counters />
+  <counters>
+    <count id="Package" value="0"/>
+    <count id="Graph" value="1"/>
+  </counters>
 </umlproject>

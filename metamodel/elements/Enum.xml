@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ElementType id="Enum" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/enum.png" />
+    <Domain id="Enum" identity="enum_name" />
+    <Connections/>
+    <Appearance>
+        <Shadow padding="3" color="#cfg.Styles.Element.ShadowColor">
+            <Rectangle fill="#cfg.Styles.Element.FillColor" border="##20fa20">
+                <HBox>
+                    <Padding padding="5">
+                        <HBox>
+							<TextBox text="#self.enum_name" color="#cfg.Styles.Element.TextColor"/>
+							<Line type="horizontal" color="#cfg.Styles.Element.LineColor"/>
+                            <Loop collection="#self.values">
+								
+                                <Condition condition="#value">
+                                    <TextBox text="#value" color="#cfg.Styles.Element.TextColor"/>
+                                </Condition>
+                            </Loop>
+                        </HBox>
+                    </Padding>
+                    
+                </HBox>
+            </Rectangle>
+        </Shadow>
+    </Appearance>
+</ElementType>

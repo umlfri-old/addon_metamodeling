@@ -1,5 +1,0 @@
-DIAGRAM_DOMAIN_NAME = 'diagram'
-CONNECTION_DOMAIN_NAME = 'connection'
-CONNECTIONS_DOMAIN_NAME = 'connections'
-ELEMENT_DOMAIN_NAME = 'element'
-ENUM_DOMAIN_NAME = 'enum'
