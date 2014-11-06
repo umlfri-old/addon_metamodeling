@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ElementType id="Enum" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/enum.png" />
+    <Domain id="enum" identity="name" />
+    <Connections>
+        <Item value="Agregation" with="Element" allowrecursive="0"/>        
+    </Connections>
+    <Appearance>
+        <Sizer minheight="40" minwidth="60"> 
+            <Rectangle fill="orange" border="#cfg.Styles.Element.LineColor">
+                <HBox> 
+                    <Padding top="10" bottom="5">
+                        <Align align="center">
+                            <TextBox text="#self.name"></TextBox>
+                        </Align> 
+                    </Padding>
+                    <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/> 
+                        <Loop collection="#self.attributes"> 
+                            <Padding left="5">
+                                <TextBox text="#value" color="#cfg.Styles.Element.TextColor"/>
+                            </Padding>
+                        </Loop>
+                </HBox>     
+            </Rectangle>
+        </Sizer>                           
+    </Appearance>
+</ElementType>

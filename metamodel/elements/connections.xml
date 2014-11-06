@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ElementType id="Connections" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/connections.png" />
+    <Domain id="connections" identity="name" />
+    <Connections>
+        <Item value="Compose" with="Diagram" allowrecursive="0"/>        
+    </Connections>
+    <Appearance>
+        <Sizer minheight="40" minwidth="60"> 
+            <Ellipse border="green" fill="white">
+                <HBox> 
+                    <Align align="center center">
+                        <Icon filename="#self.icon" />
+                    </Align>                    
+                    <Loop collection="#self.attributes"> 
+                        <Align align="center center">
+                            <TextBox text="#value" color="#cfg.Styles.Element.TextColor"/>
+                        </Align>
+                    </Loop>
+                </HBox>     
+            </Ellipse>
+        </Sizer>                           
+    </Appearance>
+</ElementType>
