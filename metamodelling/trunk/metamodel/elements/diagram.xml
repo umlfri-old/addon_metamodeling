@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ElementType id="Diagram" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/diagram.png" />
+    <Domain id="diagram" identity="name" />
+    <Connections>
+        <Item value="Compose" with="Element" allowrecursive="0"/>
+    </Connections>
+    <Appearance>        
+        <HBox>
+            <Align align="center center">
+                <Icon filename="#self.icon" />
+            </Align>
+            <Padding top="10" bottom="5">
+            <Align align="center">
+                <TextBox text="#self.name"></TextBox>
+            </Align> 
+            </Padding>           
+        </HBox>
+    </Appearance>
+</ElementType>

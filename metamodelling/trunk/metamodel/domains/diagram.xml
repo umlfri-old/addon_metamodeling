@@ -1,0 +1,11 @@
+<Domain id="diagram" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" >
+    <Attribute id="name" name="Name" >
+		<Str/>
+	</Attribute>
+    <Attribute id="icon" name="Icon" >
+		<Str default="icons/diagram.png"></Str>
+	</Attribute>
+	<Attribute id="template" name="Add to template" >
+		<Bool default="True"></Bool>
+	</Attribute>
+</Domain>

@@ -1,0 +1,19 @@
+<ConnectionType xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="Connection">
+    <Icon path="icons/connection.png"/>
+    <Domain id="connection" identity="name"/>
+    
+    <Appearance>
+        <ConnectionLine style="solid" color="blue"/>                
+        <Label position="center">
+            <HBox>
+                <Condition condition="#self.name">
+                    <Align align="center">
+                        <Rectangle fill="#cfg.Styles.Connection.TextFill">
+                            <TextBox text="#self.name" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
+                        </Rectangle>
+                    </Align>
+                </Condition>
+            </HBox>
+        </Label>
+    </Appearance>
+</ConnectionType>
