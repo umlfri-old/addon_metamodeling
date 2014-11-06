@@ -1,6 +1,6 @@
-<ConnectionType xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="Connection">
-    <Icon path="icons/connection.png"/>
-    <Domain id="connection" identity="name"/>
+<ConnectionType xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="Link">
+    <Icon path="icons/link.png"/>
+    <Domain id="link" identity="name"/>
     
     <Appearance>
         <ConnectionLine style="solid" color="blue"/>                

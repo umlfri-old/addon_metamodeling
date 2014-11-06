@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiagramType id="Metamodel editor" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/metamodel editor.png" />
+    <Domain id="metamodel_editor" identity="name" />
+    <Special swimlines="0" lifelines="0" />
+    <Elements>
+        <Item value="Diagram" />
+        <Item value="Element" />
+        <Item value="Connection" />
+        <Item value="Enum" />
+        <Item value="Test" />
+    </Elements>
+    <Connections>
+        <Item value="Link" />
+        <Item value="Agregation" />
+        <Item value="Compose" />
+    </Connections>
+</DiagramType>

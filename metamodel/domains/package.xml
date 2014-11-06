@@ -2,6 +2,24 @@
     <Attribute id="name" name="Name" >
 		<Str/>
 	</Attribute>
+	<Attribute id="uriTag" name="Uri tag" >
+		<Str/>
+	</Attribute>
+	<Attribute id="version" name="Version" >
+		<Str/>
+	</Attribute>
+	<Attribute id="author" name="Author" >
+		<Str/>
+	</Attribute>
+	<Attribute id="homepage" name="Homepage" >
+		<Str/>
+	</Attribute>
+	<Attribute id="icon" name="Icon" >
+		<Str/>
+	</Attribute>
+	<Attribute id="folder" name="Export to folder" >
+		<Str/>
+	</Attribute>
     <Attribute id="note" name="Note" >
 		<Text/>
 	</Attribute>

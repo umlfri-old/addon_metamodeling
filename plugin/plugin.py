@@ -9,7 +9,6 @@ from iconChooser import IconChooser
 from org.umlfri.api.mainLoops import GtkMainLoop
 
 def pluginMain(interface):
-    print "start----------"
     exportWindow = Export(interface)
     connections = ChooseConnections(interface)
     iconChooser = IconChooser(interface)
@@ -41,6 +40,3 @@ def pluginMain(interface):
     
     interface.transaction.autocommit = True
     interface.set_main_loop(GtkMainLoop())
-    print "end-------------"
-    #dra=DRA(interface)
-    #dra.pluginMain()
