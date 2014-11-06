@@ -1,1 +1,0 @@
-ipython -gthread MetamodelManager.py
