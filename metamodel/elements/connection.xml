@@ -4,14 +4,17 @@
     <Domain id="connection" identity="name" />
     <Connections>
         <Item value="Link" with="Element" allowrecursive="0"/>
+        <Item value="Assemble" with="Enum,Element" allowrecursive="0"/>
     </Connections>
     <Appearance>
         <Sizer minheight="80" minwidth="60">
             <Rectangle fill="lightgreen" border="#cfg.Styles.Element.LineColor">
                 <HBox>
-                    <Align align="center center">
-                        <Icon filename="#self.icon" />
-                    </Align>
+                    <Padding top="3" bottom="3">
+                      <Align align="center center">
+                          <Icon filename="#self.icon" />
+                      </Align>
+                    </Padding>
                     <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/>
                     <Padding top="7" bottom="7">
                         <Align align="center">

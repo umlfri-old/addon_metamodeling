@@ -3,16 +3,27 @@
     <Domain id="link" identity="name"/>
     
     <Appearance>
-        <ConnectionLine style="solid" color="blue"/>                
+        <ConnectionLine style="dot" color="green"/>
+        <Condition condition="#self.withMe">
+            <ConnectionLine style="solid" color="green"/>
+        </Condition>
         <Label position="center">
             <HBox>
-                <Condition condition="#self.name">
-                    <Align align="center">
-                        <Rectangle fill="#cfg.Styles.Connection.TextFill">
-                            <TextBox text="#self.name" font="#cfg.Styles.Connection.NameTextFont" color="#cfg.Styles.Connection.NameTextColor"/>
-                        </Rectangle>
-                    </Align>
-                </Condition>
+                <Align align="center">
+                    <Rectangle fill="#cfg.Styles.Connection.TextFill">
+                        <HBox>
+                            <Condition condition="#self.allowRecursive">
+                                <Align align="center">
+                                    <Rectangle fill="#cfg.Styles.Connection.TextFill">
+                                        <VBox>
+                                            <Icon filename="#self.circleIcon" />
+                                        </VBox>
+                                    </Rectangle>
+                                </Align>
+                            </Condition>
+                        </HBox>
+                    </Rectangle>
+                </Align>
             </HBox>
         </Label>
     </Appearance>

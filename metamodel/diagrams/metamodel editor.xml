@@ -7,12 +7,11 @@
         <Item value="Diagram" />
         <Item value="Element" />
         <Item value="Connection" />
-        <Item value="Enum" />
-        <Item value="Test" />
+        <Item value="Enum" />        
     </Elements>
     <Connections>
+        <Item value="Set" />
+        <Item value="Assemble" />
         <Item value="Link" />
-        <Item value="Agregation" />
-        <Item value="Compose" />
     </Connections>
 </DiagramType>

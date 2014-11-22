@@ -3,9 +3,7 @@
     <Icon path="icons/element.png" />
     <Domain id="test" identity="name" />
     <Connections>
-        <Item value="Compose" with="Diagram" allowrecursive="0"/>
-        <Item value="Agregation" with="Element" allowrecursive="0"/>
-        <Item value="Link" with="Connection" allowrecursive="1"/>
+
     </Connections>
     <Appearance>
         <Sizer minheight="80" minwidth="60"> 

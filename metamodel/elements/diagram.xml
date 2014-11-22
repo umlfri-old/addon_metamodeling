@@ -3,7 +3,8 @@
     <Icon path="icons/diagram.png" />
     <Domain id="diagram" identity="name" />
     <Connections>
-        <Item value="Compose" with="Element" allowrecursive="0"/>
+        <Item value="Set" with="Element" allowrecursive="0"/>
+        <Item value="Assemble" with="Element,Enum" allowrecursive="0"/>
     </Connections>
     <Appearance>        
         <HBox>

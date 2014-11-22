@@ -3,17 +3,19 @@
     <Icon path="icons/element.png" />
     <Domain id="element" identity="name" />
     <Connections>
-        <Item value="Compose" with="Diagram" allowrecursive="0"/>
-        <Item value="Agregation" with="Element" allowrecursive="0"/>
         <Item value="Link" with="Connection" allowrecursive="0"/>
+        <Item value="Set" with="Diagram" allowrecursive="0"/>
+        <Item value="Assemble" allowrecursive="0"/>
     </Connections>
     <Appearance>
         <Sizer minheight="80" minwidth="60"> 
             <Rectangle fill="lightblue" border="#cfg.Styles.Element.LineColor">        
                 <HBox>
-                    <Align align="center center">
-                        <Icon filename="#self.icon" />
-                    </Align>
+                    <Padding top="1" bottom="1">
+                      <Align align="center center">
+                          <Icon filename="#self.icon" />
+                      </Align>
+                    </Padding>
                     <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/> 
                     <Padding top="7" bottom="7">
                         <Align align="center">

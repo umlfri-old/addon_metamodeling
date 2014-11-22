@@ -8,9 +8,21 @@
     <Attribute id="attributes" name="Attributes" >
 		<List>
         	<Domain>
-        	    <Attribute id="value" name="Value" >
+        	    <Attribute id="attName" name="Name" >
 					<Str/>
 				</Attribute>
+				<Attribute id="attType" name="Type" >
+                    <Enum>
+			            <Value>Bool</Value>
+	                    <Value>Float</Value>
+	                    <Value>Int</Value>
+	                    <Value>Str</Value>
+	                    <Value>Text</Value>
+		            </Enum>
+                </Attribute>
+                <Attribute id="default" name="Default" >
+		            <Str/>
+	            </Attribute>
         	</Domain>
 		</List>
     </Attribute>

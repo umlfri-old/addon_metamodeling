@@ -1,0 +1,9 @@
+<ConnectionType xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="Set">
+    <Icon path="icons/set.png"/>
+    <Domain id="assemble" identity="name"/>
+    
+    <Appearance>
+        <ConnectionLine style="solid" color="red"/>
+        <ConnectionArrow index="-1" style="simple_arrow" fill="#cfg.Styles.Connection.ArrowFillColor" color="red"/>
+    </Appearance>
+</ConnectionType>
