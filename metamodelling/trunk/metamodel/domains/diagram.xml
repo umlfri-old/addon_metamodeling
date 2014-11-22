@@ -2,10 +2,31 @@
     <Attribute id="name" name="Name" >
 		<Str/>
 	</Attribute>
-    <Attribute id="icon" name="Icon" >
+    <Attribute id="icon" name="Icon"  hidden="true">
 		<Str default="icons/diagram.png"></Str>
 	</Attribute>
 	<Attribute id="template" name="Add to template" >
 		<Bool default="True"></Bool>
 	</Attribute>
+    <Attribute id="attributes" name="Attributes" >
+		<List>
+        	<Domain>
+        	    <Attribute id="attName" name="Name" >
+					<Str/>
+				</Attribute>
+				<Attribute id="attType" name="Type" >
+                    <Enum>
+			            <Value>Bool</Value>
+	                    <Value>Float</Value>
+	                    <Value>Int</Value>
+	                    <Value>Str</Value>
+	                    <Value>Text</Value>
+		            </Enum>
+                </Attribute>
+                <Attribute id="default" name="Default" >
+		            <Str/>
+	            </Attribute>
+        	</Domain>
+		</List>
+    </Attribute>
 </Domain>

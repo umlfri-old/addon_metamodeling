@@ -1,0 +1,9 @@
+<ConnectionType xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" id="Assemble">
+    <Icon path="icons/assemble.png"/>
+    <Domain id="assemble" identity="name"/>
+    
+    <Appearance>
+        <ConnectionLine style="solid" color="blue"/>
+        <ConnectionArrow index="-1" style="square_arrow" fill="blue" color="blue"/>
+    </Appearance>
+</ConnectionType>

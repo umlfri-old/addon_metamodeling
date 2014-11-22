@@ -5,6 +5,9 @@
     <Attribute id="icon" name="Icon" >
 		<Str default="icons/element.png"></Str>
 	</Attribute>
+    <Attribute id="joiner" name="Joiner" >
+		<Str/>
+	</Attribute>
 	<Attribute id="attributes" name="Attributes" >
 		<List>
         	<Domain>

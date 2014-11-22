@@ -5,7 +5,7 @@
     <version>0.0.1</version>
   </metamodel>
   <objects>
-    <object type="Package" id="0">
+    <object type="Package_default" id="0">
       <dict>
         <text name="name">Project</text>
       </dict>

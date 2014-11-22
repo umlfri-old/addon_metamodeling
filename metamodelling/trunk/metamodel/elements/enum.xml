@@ -3,7 +3,7 @@
     <Icon path="icons/enum.png" />
     <Domain id="enum" identity="name" />
     <Connections>
-        <Item value="Agregation" with="Element" allowrecursive="0"/>        
+        <Item value="Assemble" with="Element,Diagram,Connection" allowrecursive="0"/>
     </Connections>
     <Appearance>
         <Sizer minheight="40" minwidth="60"> 
