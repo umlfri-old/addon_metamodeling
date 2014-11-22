@@ -1,0 +1,29 @@
+<Domain id="package_default" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" >
+    <Attribute id="name" name="Name" >
+		<Str default="Project"/>
+	</Attribute>
+	<Attribute id="uriTag" name="Uri tag" >
+		<Str default="project"/>
+	</Attribute>
+	<Attribute id="version" name="Version" >
+		<Str default="0.0.1"/>
+	</Attribute>
+	<Attribute id="author" name="Author" >
+		<Str/>
+	</Attribute>
+	<Attribute id="homepage" name="Homepage" >
+		<Str default="http://umlfri.org"/>
+	</Attribute>
+    <Attribute id="root" name="Root element" >
+		<Str default="Package_default"/>
+	</Attribute>
+	<Attribute id="icon" name="Icon" >
+		<Str/>
+	</Attribute>
+	<Attribute id="folder" name="Export to folder" >
+		<Str/>
+	</Attribute>
+    <Attribute id="note" name="Note" >
+		<Text/>
+	</Attribute>
+</Domain>
