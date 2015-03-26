@@ -4,7 +4,10 @@
 	</Attribute> 
 	<Attribute id="icon" name="Icon" >
 		<Str default="icons/connection.png"></Str>
-	</Attribute>   
+	</Attribute>
+	<Attribute id="appearance" name="Appearance" hidden="true">
+		<Text/>
+	</Attribute>
     <Attribute id="attributes" name="Attributes" >
 		<List>
         	<Domain>

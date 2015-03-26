@@ -2,10 +2,10 @@ import gtk
 import os
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
-from align import Align
 from expand import Expand
+from elementValue import ElementValue
 
-class Container(gtk.EventBox):
+class Condition(gtk.EventBox):
     def __init__(self, name, box, manager, parent):
         gtk.EventBox.__init__(self)
         self.manager = manager
@@ -13,11 +13,10 @@ class Container(gtk.EventBox):
         self.box = box
         self.parentContainer = parent
         self.childObjects = []
-
         self.expand = None
         if type(self.parentContainer).__name__ == 'Container':
             self.expand = Expand(self)
-        self.align = Align(self)
+        self.condition = gtk.Entry()
 
         newVbox = gtk.VBox()
         self.set_border_width(0)
@@ -53,7 +52,6 @@ class Container(gtk.EventBox):
 
         newVbox.pack_start(newHbox,False)
 
-
         sc = SimpleContent(self,manager)
         self.box.pack_start(sc)
         self.childObjects.append(sc)
@@ -78,6 +76,7 @@ class Container(gtk.EventBox):
             if c.content == child:
                 self.box.remove(c)
                 self.childObjects.remove(c)
+        self.add_New_Simple_Content()
 
     def showProperties(self, widget, w):
         if self.manager.lastHighligted:
@@ -87,37 +86,27 @@ class Container(gtk.EventBox):
         box = self.manager.wTree.get_widget('vbox_properties')
         for w in box.children():
             box.remove(w)
+
+        hbox = gtk.HBox()
+        label = gtk.Label('Condition')
+        label.set_alignment(0.01, 0.5)
+        hbox.pack_start(label,False)
+        hbox.pack_end(ElementValue(self,'Condition'),False)
+        box.pack_start(hbox,False)
+        box.pack_start(self.condition, False)
+
+        box.pack_start(gtk.Label(' '),False)
         if self.expand:
             box.pack_start(self.expand, False)
             box.pack_start(gtk.Label(' '),False)
-        box.pack_start(self.align,False)
         box.show_all()
 
     def add_New_Simple_Content(self):
-        sc = SimpleContent(self,self.manager)
-        self.box.pack_start(sc)
-        self.childObjects.append(sc)
-        self.show_all()
-
-    def reorder(self, newPosition, child):
-        for c in self.childObjects:
-            if c.content == child:
-                self.childObjects.remove(c)
-                self.childObjects.insert(newPosition, c)
-        tempList = []
-        tempChild = None
-        for c in self.box.children():
-            if c.content == child:
-                tempChild = c
-            else:
-                tempList.append(c)
-            self.box.remove(c)
-
-        for i in range(0,len(tempList)):
-            if i == newPosition:
-                self.box.pack_start(tempChild)
-            self.box.pack_start(tempList[i])
-        self.changePacking()
+        if len(self.childObjects) == 0:
+            sc = SimpleContent(self,self.manager)
+            self.box.pack_start(sc)
+            self.childObjects.append(sc)
+            self.show_all()
 
     def motion_cb(self, wid, context, x, y, time):
         context.drag_status(gtk.gdk.ACTION_COPY, time)
@@ -136,77 +125,16 @@ class Container(gtk.EventBox):
             self.parentContainer.reorder(newPosition, source)
         return True
 
-    def isHBox(self):
-        if type(self.box).__name__ == 'HBox':
-            return True
-        return False
-
-    def changePacking(self):
-        tempContainer = []
-        for x in self.box.children():
-            tempContainer.append(x)
-            self.box.remove(x)
-        for x in tempContainer:
-            if type(x.content).__name__ == 'TextBox':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Line':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Icon':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Padding':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Sizer':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Proportional':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Condition':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Loop':
-                self.box.pack_start(x,False)
-            #elif type(x.content).__name__ == 'Container':
-            #    if x.content.isHBox():
-            #        self.box.pack_start(x,False)
-            #    else:
-            #        self.box.pack_start(x)
-            else:
-                self.box.pack_start(x)
-
-    def xChanged(self, combo):
-        self.align.xAlign = combo.get_active()
-
-    def yChanged(self, combo):
-        self.align.yAlign = combo.get_active()
+    def setElementValue(self, attrib, value):
+        self.condition.set_text(value)
 
     def getApp(self):
-        if self.childObjects[0].content == None:
-            if self.isHBox():
-                return '<VBox />'
-            else:
-                return '<HBox />'
-        app = ''
-        if self.isHBox():
-            app = '<VBox '
+        if self.condition.get_text() == '':
+            return ''
+        app = '<Condition condition="' + self.condition.get_text() + '">'
+        if self.childObjects[0].content != None:
+            app += self.childObjects[0].content.getApp()
         else:
-            app = '<HBox '
-        app += 'expand="'
-        i = 0
-        for child in self.childObjects:
-            if child.content:
-                if type(child.content).__name__ != 'Line':
-                    if child.content.expand.isTrue():
-                        app += str(i)
-                        app += ' '
-            i += 1
-        app += '" >'
-        for child in self.childObjects:
-            if child.content:
-                app += child.content.getApp()
-        if self.isHBox():
-            app += ' </VBox>'
-        else:
-            app += ' </HBox>'
-        if self.align.isAlignSet():
-            app = '<Align ' + self.align.getXMLFormat() + '>' + app + '</Align>'
+            return ''
+        app += '</Condition>'
         return app
-
-

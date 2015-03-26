@@ -8,33 +8,35 @@
         <Item value="Assemble" allowrecursive="0"/>
     </Connections>
     <Appearance>
-        <Sizer minheight="80" minwidth="60"> 
-            <Rectangle fill="lightblue" border="#cfg.Styles.Element.LineColor">        
+        <Sizer minheight="80" minwidth="60">
+            <Rectangle fill="lightblue" border="#cfg.Styles.Element.LineColor">
                 <HBox>
                     <Padding top="1" bottom="1">
                       <Align align="center center">
                           <Icon filename="#self.icon" />
                       </Align>
                     </Padding>
-                    <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/> 
+                    <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/>
                     <Padding top="7" bottom="7">
                         <Align align="center">
                             <TextBox text="#self.name"></TextBox>
                         </Align>
                     </Padding>
                     <Line type="horizontal" color="#cfg.Styles.Element.LineColor"/>
-                    <Loop collection="#self.attributes"> 
-                        <VBox>
-                            <Padding left="5">
-                                <TextBox text="#attName" color="#cfg.Styles.Element.TextColor"/>  
-                            </Padding>
+                    <Loop collection="#self.attributes">
+                        <Padding left="5" right="5">
+                            <VBox>
+                                <TextBox text="#attName" color="#cfg.Styles.Element.TextColor"/>
                                 <TextBox text=": " color="#cfg.Styles.Element.TextColor"/>
                                 <TextBox text="#attType" color="#cfg.Styles.Element.TextColor"/>
-                                <TextBox text=" = " color="#cfg.Styles.Element.TextColor"/>
-                            <Padding right="5">
-                                <TextBox text="#default" color="#cfg.Styles.Element.TextColor"/>
-                            </Padding>
-                        </VBox>
+                                <Condition condition="#default">
+                                    <VBox>
+                                        <TextBox text=" = " color="#cfg.Styles.Element.TextColor" />
+                                        <TextBox text="#default" color="#cfg.Styles.Element.TextColor" />
+                                        </VBox>
+                                </Condition>
+                            </VBox>
+                        </Padding>
                     </Loop>           
                 </HBox>
             </Rectangle>
