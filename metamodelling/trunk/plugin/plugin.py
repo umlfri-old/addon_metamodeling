@@ -5,21 +5,21 @@ import gtk
 from export.export import Export
 from chooseConnections import ChooseConnections
 from iconChooser import IconChooser
-from test import Test
+from appearanceManager import AppearanceManager
 
 from org.umlfri.api.mainLoops import GtkMainLoop
 
 def pluginMain(interface):
     exportWindow = Export(interface)
     iconChooser = IconChooser(interface)
-    test = Test(interface)
-    
+    test = AppearanceManager(interface)
+
     interface.gui_manager.button_bar.add_button(
-        'export_metamodel',
-        lambda *a: exportWindow.show(),
-        -1,
-        'Export metamodel',
-        imagefilename = os.path.join('icons', 'export.png')
+    'export_metamodel',
+    lambda *a: exportWindow.show(),
+    -1,
+    'Export metamodel',
+    imagefilename = os.path.join('icons', 'export.png')
     )
 
     interface.gui_manager.draw_menu.add_menu_item(
@@ -38,6 +38,17 @@ def pluginMain(interface):
         False,
         ''
     )
-    
+
+    def projectOpened():
+        if interface.project.metamodel.uri == 'urn:umlfri.org:metamodel:metamodeling':
+            for node in interface.project.root.children:
+                if node.type.name == 'Element':
+                    x = node.values['appearance']
+                    #print type(x)
+
+    interface.add_notification('project-opened', projectOpened)
+
     interface.transaction.autocommit = True
     interface.set_main_loop(GtkMainLoop())
+
+

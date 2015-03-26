@@ -1,11 +1,14 @@
 import gtk
+import pango
 
 class SimpleContent(gtk.EventBox):
     def __init__(self, parentContainer, manager):
         gtk.EventBox.__init__(self)
         self.parentContainer = parentContainer
         self.manager = manager
-        self.label = gtk.Label('Add content')
+        self.label = gtk.Label(' \nAdd content\n ')
+        fontdesc = pango.FontDescription("ultra-light")
+        self.label.modify_font(fontdesc)
         self.set_border_width(2)
         self.enterNotifyHandler = self.connect('enter_notify_event', manager.buttonAddEnter)
         self.buttonReleaseHandler = self.connect('button_release_event', manager.addContent)
@@ -37,3 +40,5 @@ class SimpleContent(gtk.EventBox):
             self.parentContainer.add_New_Simple_Content()
         self.content = container
         self.add(container)
+
+

@@ -2,11 +2,14 @@
     <Attribute id="name" name="Name" >
 		<Str/>
 	</Attribute>
-    <Attribute id="icon" name="Icon" >
+    <Attribute id="icon" name="Icon" hidden="true">
 		<Str default="icons/element.png"></Str>
 	</Attribute>
     <Attribute id="joiner" name="Joiner" >
 		<Str/>
+	</Attribute>
+	<Attribute id="appearance" name="Appearance" hidden="true">
+		<Text/>
 	</Attribute>
 	<Attribute id="attributes" name="Attributes" >
 		<List>
