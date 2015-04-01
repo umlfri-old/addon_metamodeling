@@ -22,9 +22,9 @@ class ConnectionArrow(DragSourceEventBox):
         self.arrowStyle.append_text('triangle')
         self.arrowStyle.append_text('diamond')
         self.arrowStyle.append_text('circle')
+        self.arrowStyle.append_text('square')
         self.arrowStyle.set_active(0)
-        self.arrowStyle.connect('changed', self.styleChanged)
-        self.styleDict = {'simple':'simple_arrow', 'triangle':'triangle_arrow', 'diamond':'diamond_arrow', 'circle':'crosscircle_arrow' }
+        self.styleDict = {'simple':'simple_arrow', 'triangle':'triangle_arrow', 'diamond':'diamond_arrow', 'circle':'crosscircle_arrow', 'square':'square_arrow' }
 
         self.arrowColor = ColorChooserButton(self, 'Select arrow color')
         self.fillColor = ColorChooserButton(self, 'Select fill color')
@@ -42,13 +42,21 @@ class ConnectionArrow(DragSourceEventBox):
         self.eB.add(self.box)
         self.add(self.eB)
 
-    def styleChanged(self, widget):
+        self.directionHandler = self.arrowDirection.connect('changed', self.directionChanged)
+        self.styleHandler = self.arrowStyle.connect('changed', self.styleChanged)
+
+    def directionChanged(self, widget):
         self.exposeLine(self.drawArea, None)
         self.drawArea.queue_draw()
 
+    def styleChanged(self, widget):
+        self.exposeLine(self.drawArea, None)
+        self.drawArea.queue_draw()
+        self.showProperties(None, None)
+
     def createContent(self):
         self.box = gtk.HBox()
-        label = gtk.Label('  Arrow  ')
+        label = gtk.Label(' \n  Arrow  \n ')
         self.drawArea = gtk.DrawingArea()
         self.drawArea.connect('expose-event',self.exposeLine)
 
@@ -94,27 +102,62 @@ class ConnectionArrow(DragSourceEventBox):
 
         x, y = drawArea.window.get_size()
 
-        if self.arrowStyle.get_active_text() == 'simple':
-            drawArea.window.draw_lines(gc,[(10,y/2),(50,y/2),(35,y/2-15)])
-            drawArea.window.draw_lines(gc,[(50,y/2),(35,y/2+15)])
-        elif self.arrowStyle.get_active_text() == 'triangle':
-            drawArea.window.draw_lines(gc,[(10,y/2),(30,y/2)])
-            drawArea.window.draw_polygon(gc, False,[(30,y/2-15),(30,y/2+15),(50,y/2)])
-            if fill:
-                gc.foreground = fill
-                drawArea.window.draw_polygon(gc, True,[(31,y/2-13),(31,y/2+13),(49,y/2)])
-        elif self.arrowStyle.get_active_text() == 'diamond':
-            drawArea.window.draw_lines(gc,[(10,y/2),(30,y/2)])
-            drawArea.window.draw_polygon(gc, False,[(30,y/2),(55,y/2-15),(80,y/2),(55,y/2+15)])
-            if fill:
-                gc.foreground = fill
-                drawArea.window.draw_polygon(gc, True,[(32,y/2),(55,y/2-14),(79,y/2),(55,y/2+14)])
-        elif self.arrowStyle.get_active_text() == 'circle':
-            drawArea.window.draw_lines(gc,[(10,y/2),(30,y/2)])
-            drawArea.window.draw_arc(gc, False, 30, y/2-15, 30, 30, 0, 360*64)
-            if fill:
-                gc.foreground = fill
-                drawArea.window.draw_arc(gc, True, 31, y/2-14, 28, 28, 0, 360*64)
+        if self.arrowDirection.get_active() == 0:
+            if self.arrowStyle.get_active_text() == 'simple':
+                drawArea.window.draw_lines(gc,[(10,y/2),(50,y/2),(35,y/2-15)])
+                drawArea.window.draw_lines(gc,[(50,y/2),(35,y/2+15)])
+            elif self.arrowStyle.get_active_text() == 'triangle':
+                drawArea.window.draw_lines(gc,[(10,y/2),(30,y/2)])
+                drawArea.window.draw_polygon(gc, False,[(30,y/2-15),(30,y/2+15),(50,y/2)])
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_polygon(gc, True,[(31,y/2-13),(31,y/2+13),(49,y/2)])
+            elif self.arrowStyle.get_active_text() == 'diamond':
+                drawArea.window.draw_lines(gc,[(10,y/2),(30,y/2)])
+                drawArea.window.draw_polygon(gc, False,[(30,y/2),(55,y/2-15),(80,y/2),(55,y/2+15)])
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_polygon(gc, True,[(32,y/2),(55,y/2-14),(79,y/2),(55,y/2+14)])
+            elif self.arrowStyle.get_active_text() == 'circle':
+                drawArea.window.draw_lines(gc,[(10,y/2),(30,y/2)])
+                drawArea.window.draw_arc(gc, False, 30, y/2-15, 30, 30, 0, 360*64)
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_arc(gc, True, 31, y/2-14, 28, 28, 0, 360*64)
+            elif self.arrowStyle.get_active_text() == 'square':
+                drawArea.window.draw_lines(gc,[(10,y/2),(30,y/2)])
+                drawArea.window.draw_polygon(gc, False,[(30,y/2),(45,y/2-15),(60,y/2),(45,y/2+15)])
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_polygon(gc, True,[(32,y/2),(45,y/2-14),(59,y/2),(45,y/2+14)])
+        else:
+            if self.arrowStyle.get_active_text() == 'simple':
+                drawArea.window.draw_lines(gc,[(10,y/2),(50,y/2)])
+                drawArea.window.draw_lines(gc,[(25,y/2-15),(10,y/2),(25,y/2+15)])
+            elif self.arrowStyle.get_active_text() == 'triangle':
+                drawArea.window.draw_lines(gc,[(30,y/2),(50,y/2)])
+                drawArea.window.draw_polygon(gc, False,[(30,y/2-15),(30,y/2+15),(10,y/2)])
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_polygon(gc, True,[(29,y/2-13),(29,y/2+13),(11,y/2)])
+            elif self.arrowStyle.get_active_text() == 'diamond':
+                drawArea.window.draw_lines(gc,[(60,y/2),(80,y/2)])
+                drawArea.window.draw_polygon(gc, False,[(10,y/2),(35,y/2-15),(60,y/2),(35,y/2+15)])
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_polygon(gc, True,[(12,y/2),(35,y/2-14),(59,y/2),(35,y/2+14)])
+            elif self.arrowStyle.get_active_text() == 'circle':
+                drawArea.window.draw_lines(gc,[(40,y/2),(60,y/2)])
+                drawArea.window.draw_arc(gc, False, 10, y/2-15, 30, 30, 0, 360*64)
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_arc(gc, True, 11, y/2-14, 28, 28, 0, 360*64)
+            elif self.arrowStyle.get_active_text() == 'square':
+                drawArea.window.draw_lines(gc,[(40,y/2),(60,y/2)])
+                drawArea.window.draw_polygon(gc, False,[(10,y/2),(25,y/2-15),(40,y/2),(25,y/2+15)])
+                if fill:
+                    gc.foreground = fill
+                    drawArea.window.draw_polygon(gc, True,[(12,y/2),(25,y/2-14),(39,y/2),(25,y/2+14)])
 
         gc.foreground = tempColor
 
@@ -149,14 +192,15 @@ class ConnectionArrow(DragSourceEventBox):
         box.pack_start(self.arrowColor, False)
         box.pack_start(gtk.Label(' '),False)
 
-        labelColor = gtk.Label('Fill color')
-        labelColor.set_alignment(0.01, 0.5)
-        hBox = gtk.HBox()
-        hBox.pack_start(labelColor,False)
-        hBox.pack_end(PythonValue(self,'Fill color'),False)
-        hBox.pack_end(ElementValue(self,'Fill color'),False)
-        box.pack_start(hBox, False)
-        box.pack_start(self.fillColor, False)
+        if self.arrowStyle.get_active_text() != 'simple':
+            labelColor = gtk.Label('Fill color')
+            labelColor.set_alignment(0.01, 0.5)
+            hBox = gtk.HBox()
+            hBox.pack_start(labelColor,False)
+            hBox.pack_end(PythonValue(self,'Fill color'),False)
+            hBox.pack_end(ElementValue(self,'Fill color'),False)
+            box.pack_start(hBox, False)
+            box.pack_start(self.fillColor, False)
         box.pack_start(gtk.Label(' '),False)
 
         box.show_all()
@@ -186,13 +230,6 @@ class ConnectionArrow(DragSourceEventBox):
                 self.fillColor.set_label(self.fillColor.color)
             else:
                 self.fillColor.set_label('')
-
-            #if value == '':
-            #    self.fillColor.color = None
-            #    self.fillColor.set_label('')
-            #else:
-            #    self.fillColor.color = '#'+value
-            #    self.fillColor.set_label(self.fillColor.color)
             self.exposeLine(self.drawArea, None)
             self.drawArea.queue_draw()
 
@@ -200,7 +237,7 @@ class ConnectionArrow(DragSourceEventBox):
         self.exposeLine(self.drawArea, None)
 
     def getApp(self):
-        app = '<ConnectionArrow index=" '
+        app = '<ConnectionArrow index="'
         if self.arrowDirection.get_active_text() == 'src -> dest':
             app += '-1" '
         else:
@@ -212,3 +249,31 @@ class ConnectionArrow(DragSourceEventBox):
             app += 'fill="' + self.fillColor.color + '" '
         app += '/>'
         return app
+
+    def setIndex(self, index):
+        self.arrowDirection.disconnect(self.directionHandler)
+        if index == '-1':
+            self.arrowDirection.set_active(0)
+        if index == '0':
+            self.arrowDirection.set_active(1)
+        self.directionHandler = self.arrowDirection.connect('changed', self.directionChanged)
+
+    def setArrowStyle(self, style):
+        self.arrowStyle.disconnect(self.styleHandler)
+        if style == 'simple_arrow':
+            self.arrowStyle.set_active(0)
+        elif style == 'triangle_arrow':
+            self.arrowStyle.set_active(1)
+        elif style == 'diamond_arrow':
+            self.arrowStyle.set_active(2)
+        elif style == 'crosscircle_arrow':
+            self.arrowStyle.set_active(3)
+        elif style == 'square_arrow':
+            self.arrowStyle.set_active(4)
+        self.styleHandler = self.arrowStyle.connect('changed', self.styleChanged)
+
+    def setArrowColor(self, color):
+        self.arrowColor.setColor(color)
+
+    def setFillColor(self, color):
+        self.fillColor.setColor(color)

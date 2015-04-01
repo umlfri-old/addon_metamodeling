@@ -153,16 +153,16 @@ class Container(gtk.EventBox):
                 self.box.pack_start(x,False)
             elif type(x.content).__name__ == 'Icon':
                 self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Padding':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Sizer':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Proportional':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Condition':
-                self.box.pack_start(x,False)
-            elif type(x.content).__name__ == 'Loop':
-                self.box.pack_start(x,False)
+            #elif type(x.content).__name__ == 'Padding':
+            #    self.box.pack_start(x,False)
+            #elif type(x.content).__name__ == 'Sizer':
+            #    self.box.pack_start(x,False)
+            #elif type(x.content).__name__ == 'Proportional':
+            #    self.box.pack_start(x,False)
+            #elif type(x.content).__name__ == 'Condition':
+            #    self.box.pack_start(x,False)
+            #elif type(x.content).__name__ == 'Loop':
+            #    self.box.pack_start(x,False)
             #elif type(x.content).__name__ == 'Container':
             #    if x.content.isHBox():
             #        self.box.pack_start(x,False)
@@ -171,19 +171,13 @@ class Container(gtk.EventBox):
             else:
                 self.box.pack_start(x)
 
-    def xChanged(self, combo):
-        self.align.xAlign = combo.get_active()
+    def xChanged(self):
+        pass
 
-    def yChanged(self, combo):
-        self.align.yAlign = combo.get_active()
+    def yChanged(self):
+        pass
 
     def getApp(self):
-        if self.childObjects[0].content == None:
-            if self.isHBox():
-                return '<VBox />'
-            else:
-                return '<HBox />'
-        app = ''
         if self.isHBox():
             app = '<VBox '
         else:
@@ -209,4 +203,13 @@ class Container(gtk.EventBox):
             app = '<Align ' + self.align.getXMLFormat() + '>' + app + '</Align>'
         return app
 
-
+    @staticmethod
+    def validate(element):
+        childs = []
+        for child in element.iter():
+            if child != element:
+                childs.append(child)
+        if len(childs) == 0:
+            return False, 'Missing content in '+ element.tag + '. Add some or delete ' + element.tag + '.'
+        else:
+            return True, None

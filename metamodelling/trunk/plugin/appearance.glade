@@ -359,7 +359,16 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <widget class="GtkLabel" id="label8">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">  </property>
+              </widget>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">25</property>
+              </packing>
             </child>
             <child>
               <placeholder/>

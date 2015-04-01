@@ -129,12 +129,17 @@ class Condition(gtk.EventBox):
         self.condition.set_text(value)
 
     def getApp(self):
-        if self.condition.get_text() == '':
-            return ''
         app = '<Condition condition="' + self.condition.get_text() + '">'
         if self.childObjects[0].content != None:
             app += self.childObjects[0].content.getApp()
-        else:
-            return ''
         app += '</Condition>'
         return app
+
+    @staticmethod
+    def validate(element):
+        value = element.get('condition')
+        if value == '' or not value.strip():
+            return False, 'Missing value in condition. Add some or delete condition.'
+        if element.getchildren() == []:
+            return False, 'Missing content for condition "' + value + '". Add some or delete condition.'
+        return True, None

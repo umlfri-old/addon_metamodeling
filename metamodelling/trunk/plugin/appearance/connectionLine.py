@@ -18,19 +18,19 @@ class ConnectionLine(DragSourceEventBox):
         self.lineStyle.append_text('solid')
         self.lineStyle.append_text('dot')
         self.lineStyle.set_active(0)
-        self.lineStyle.connect('changed', self.styleChanged)
+        self.styleHandler = self.lineStyle.connect('changed', self.styleChanged)
 
         self.widthSpin = gtk.SpinButton(gtk.Adjustment(1,1,10000,1,10,0),0.0,0)
         self.widthSpin.set_editable(False)
-        self.widthSpin.connect('changed', self.widthChanged)
+        self.widthHandler = self.widthSpin.connect('changed', self.widthChanged)
 
         self.beginSpin = gtk.SpinButton(gtk.Adjustment(0.0,0.0,1.0,0.01,0.1,0),0.01,2)
         self.beginSpin.set_editable(False)
-        self.beginSpin.connect('changed', self.longChanged)
+        self.beginHandler = self.beginSpin.connect('changed', self.longChanged)
 
         self.endSpin = gtk.SpinButton(gtk.Adjustment(1.0,0.0,1.0,0.01,0.1,0),0.01,2)
         self.endSpin.set_editable(False)
-        self.endSpin.connect('changed', self.longChanged)
+        self.endHandler = self.endSpin.connect('changed', self.longChanged)
 
         self.drawArea = None
         self.box = None
@@ -101,7 +101,6 @@ class ConnectionLine(DragSourceEventBox):
         drawArea.set_size_request(x1, 7)
         x, y = drawArea.window.get_size()
         start = int((self.beginSpin.get_value()*x1))
-        #end = x1 - int(((1-self.endSpin.get_value())*x1))
         end = int((self.endSpin.get_value()*x1))
         drawArea.window.draw_line(gc, start, y/2, end, y/2)
         gc.foreground = tempColor
@@ -179,7 +178,33 @@ class ConnectionLine(DragSourceEventBox):
             app += 'color="' + self.buttonColor.color + '" '
         app += 'style="' + self.lineStyle.get_active_text() + '" '
         app += 'width="' + str(int(self.widthSpin.get_value())) + '" '
-        app += 'begin="' + str(int(self.beginSpin.get_value())) + '" '
-        app += 'end="' + str(int(self.endSpin.get_value())) + '" '
+        app += 'begin="' + str(self.beginSpin.get_value()) + '" '
+        app += 'end="' + str(self.endSpin.get_value()) + '" '
         app += '/>'
         return app
+
+    def setLineColor(self, color):
+        self.buttonColor.setColor(color)
+
+    def setLineStyle(self, style):
+        self.lineStyle.disconnect(self.styleHandler)
+        if style == 'solid':
+            self.lineStyle.set_active(0)
+        if style == 'dot':
+            self.lineStyle.set_active(1)
+        self.styleHandler = self.lineStyle.connect('changed', self.styleChanged)
+
+    def setLineWidth(self, width):
+        self.widthSpin.disconnect(self.widthHandler)
+        self.widthSpin.set_value(int(width))
+        self.widthHandler = self.widthSpin.connect('changed', self.widthChanged)
+
+    def setLineBegin(self, begin):
+        self.beginSpin.disconnect(self.beginHandler)
+        self.beginSpin.set_value(float(begin))
+        self.beginHandler = self.beginSpin.connect('changed', self.longChanged)
+
+    def setLineEnd(self, end):
+        self.endSpin.disconnect(self.endHandler)
+        self.endSpin.set_value(float(end))
+        self.endHandler = self.endSpin.connect('changed', self.longChanged)

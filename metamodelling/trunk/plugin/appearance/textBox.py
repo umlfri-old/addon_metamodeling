@@ -16,7 +16,8 @@ class TextBox(DragSourceEventBox):
         self.parentContainer = parent
         #self.color = None
         self.font = gtk.FontSelection()
-        self.font.set_font_name('sans 12')
+        #self.font.set_font_name('sans 12')
+        #self.font.set_font_name('Serif Bold Italic 12 ')
         self.shadow = Shadow(self)
         self.expand = None
         if type(self.parentContainer).__name__ == 'Container':
@@ -32,6 +33,9 @@ class TextBox(DragSourceEventBox):
         self.textEntry.connect('changed', self.textEdited)
 
         self.buttonFont = gtk.Button()
+        self.buttonFont.set_label(self.font.get_font_name())
+        self.buttonFont.set_alignment(0.01, 0.5)
+        self.buttonFont.connect('clicked', self.changeFont)
 
         self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("black"))
         eB = gtk.EventBox()
@@ -128,9 +132,6 @@ class TextBox(DragSourceEventBox):
         fontHbox.pack_start(labelFont,False)
         fontHbox.pack_end(PythonValue(self,'Text font'),False)
         fontHbox.pack_end(ElementValue(self,'Text font'),False)
-        self.buttonFont.set_label(self.font.get_font_name())
-        self.buttonFont.set_alignment(0.01, 0.5)
-        self.buttonFont.connect('clicked', self.changeFont)
 
         box.pack_start(self.textEntry,False)
         box.pack_start(gtk.Label(' '),False)
@@ -166,35 +167,11 @@ class TextBox(DragSourceEventBox):
             button.set_label(self.font.get_font_name())
         dialog.destroy()
 
-    def xChanged(self, combo):
-        self.align.xAlign = combo.get_active()
-        if combo.get_active() == 0:
-            self.text.set_alignment(0.0, 0.5)
-            self.align.xValue = 0.0
-        elif combo.get_active() == 1:
-            self.text.set_alignment(0.5, 0.5)
-            self.align.xValue = 0.5
-        elif combo.get_active() == 2:
-            self.text.set_alignment(1.0, 0.5)
-            self.align.xValue = 1.0
-        elif combo.get_active() == 3:
-            self.text.set_alignment(0.0, 0.5)
-            self.align.xValue = 0.0
+    def xChanged(self):
+        self.text.set_alignment(self.align.xValue, 0.5)
 
-    def yChanged(self, combo):
-        self.align.yAlign = combo.get_active()
-        if combo.get_active() == 0:
-            self.textAlign.set(self.align.xValue, 0.0, 1.0, 0.0)
-            self.align.yValue = 0.0
-        elif combo.get_active() == 1:
-            self.textAlign.set(self.align.xValue, 0.5, 1.0, 0.0)
-            self.align.yValue = 0.5
-        elif combo.get_active() == 2:
-            self.textAlign.set(self.align.xValue, 1.0, 1.0, 0.0)
-            self.align.yValue = 1.0
-        elif combo.get_active() == 3:
-            self.textAlign.set(self.align.xValue, 0.5, 1.0, 0.0)
-            self.align.yValue = 0.5
+    def yChanged(self):
+        self.textAlign.set(self.align.xValue, self.align.yValue, 1.0, 0.0)
 
     def setElementValue(self, attrib, value):
         if attrib == 'Text color':
@@ -229,8 +206,23 @@ class TextBox(DragSourceEventBox):
         if self.buttonFont.get_label() != '':
             app += 'font="' + self.buttonFont.get_label() + '" '
         app += '/>'
-        if self.shadow.padding > 0 and self.shadow.buttonColor.color:
+        if self.shadow.padding > 0 or self.shadow.buttonColor.color:
             app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
         if self.align.isAlignSet():
             app = '<Align ' + self.align.getXMLFormat() + '>' + app + '</Align>'
         return app
+
+    def setTextFont(self, font):
+        self.font.set_font_name(font)
+        self.text.modify_font(pango.FontDescription(font))
+        self.buttonFont.set_label(font)
+
+    def setTextColor(self, color):
+        self.buttonTextColor.setColor(color)
+        if not color.startswith('#'):
+            try:
+                self.text.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color(color))
+            except ValueError:
+                self.text.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color('#'+color))
+        else:
+            self.text.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color('black'))

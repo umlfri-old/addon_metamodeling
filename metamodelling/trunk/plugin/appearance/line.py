@@ -197,6 +197,14 @@ class Line(DragSourceEventBox):
         if self.buttonColor.color:
             app += 'color="' + self.buttonColor.color + '" '
         app += '/>'
-        if self.shadow.padding > 0 and self.shadow.buttonColor.color:
+        if self.shadow.padding > 0 or self.shadow.buttonColor.color:
             app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
         return app
+
+    def setLineType(self, type):
+        self.lineType = type
+        if type == 'horizontal':
+            self.comboType.set_active(0)
+        if type == 'vertical':
+            self.comboType.set_active(1)
+        self.changeLineType(self.comboType)

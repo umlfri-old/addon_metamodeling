@@ -25,3 +25,10 @@ class Expand(gtk.VBox):
         else:
             return False
 
+    def setExpand(self, bool):
+        if bool == True:
+            self.comboExpand.set_active(1)
+            self.expand = 1
+        else:
+            self.comboExpand.set_active(0)
+            self.expand = 0

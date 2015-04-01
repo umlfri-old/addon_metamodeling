@@ -47,4 +47,27 @@ class Shadow(gtk.VBox):
         pass
 
     def getXMLFormat(self):
-        return 'padding="' + str(int(self.padding)) + '" color="' + self.buttonColor.color + '"'
+        if self.buttonColor.color == None:
+            color = ''
+        else:
+            color = self.buttonColor.color
+        return 'padding="' + str(int(self.padding)) + '" color="' + color + '"'
+
+    def setShadow(self, element):
+        padding = element.get('padding')
+        if padding:
+            self.spin.set_value(int(padding))
+        color = element.get('color')
+        if color:
+            self.buttonColor.setColor(color)
+
+    @staticmethod
+    def validate(element):
+        padding = int(element.get('padding'))
+        color = element.get('color')
+        if padding > 0 and color == '':
+            child = None
+            for c in element:
+                child = c
+            return False, 'Missing shadow color in ' + child.tag + '.'
+        return True, None

@@ -180,7 +180,7 @@ class Padding(gtk.EventBox):
     def getApp(self):
         app = '<Padding '
         if 0 == self.paddingSpin.get_value() == self.leftSpin.get_value() == self.rightSpin.get_value() == self.topSpin.get_value() == self.bottomSpin.get_value():
-            app += 'padding="0">'
+            app += 'padding="0"'
         if self.paddingSpin.get_value() != 0:
             app += 'padding="' + str(int(self.paddingSpin.get_value())) + '">'
         else:
@@ -197,3 +197,12 @@ class Padding(gtk.EventBox):
             app += self.childObjects[0].content.getApp()
         app += '</Padding>'
         return app
+
+    @staticmethod
+    def validate(element):
+        padding = element.get('padding')
+        if padding == '0':
+            return False, 'Padding values not set. Set some or delete padding.'
+        if element.getchildren() == []:
+            return False, 'Missing content for padding. Add some or delete padding.'
+        return True, None

@@ -61,6 +61,10 @@ class Switch(gtk.EventBox):
 
         newVbox.pack_start(newHbox,False)
 
+        self.buttonDelete = gtk.Button('Delete case')
+        self.buttonDelete.connect('clicked', self.deleteCase)
+        self.buttonDelete.set_sensitive(False)
+
         sc = SimpleContent(self,manager)
         self.notebook = gtk.Notebook()
         self.notebook.connect('switch-page', self.switchPage)
@@ -122,9 +126,9 @@ class Switch(gtk.EventBox):
         box.pack_start(button,False)
         box.pack_start(gtk.Label(' '),False)
 
-        button = gtk.Button('Delete case')
-        button.connect('clicked', self.deleteCase)
-        box.pack_start(button,False)
+        box.pack_start(self.buttonDelete,False)
+        if len(self.childObjects) > 1:
+            self.buttonDelete.set_sensitive(True)
 
         box.pack_start(gtk.Label(' '),False)
         if self.expand:
@@ -133,11 +137,12 @@ class Switch(gtk.EventBox):
         box.show_all()
 
     def add_New_Simple_Content(self):
-        if len(self.childObjects) == 0:
-            sc = SimpleContent(self,self.manager)
-            self.box.pack_start(sc)
-            self.childObjects.append(sc)
-            self.show_all()
+        pass
+        #if len(self.childObjects) == 0:
+        #    sc = SimpleContent(self,self.manager)
+        #    self.box.pack_start(sc)
+        #    self.childObjects.append(sc)
+        #    self.show_all()
 
     def motion_cb(self, wid, context, x, y, time):
         context.drag_status(gtk.gdk.ACTION_COPY, time)
@@ -172,6 +177,7 @@ class Switch(gtk.EventBox):
         self.notebook.append_page(sc, gtk.Label('Case'))
         self.notebook.show_all()
         self.childObjects.append(sc)
+        self.buttonDelete.set_sensitive(True)
 
     def deleteCase(self, w):
         if self.notebook.get_n_pages() > 1:
@@ -181,6 +187,8 @@ class Switch(gtk.EventBox):
                 self.childObjects.remove(self.notebook.get_nth_page(self.notebook.get_current_page()))
                 self.notebook.remove_page(self.notebook.get_current_page())
             dialog.destroy()
+        if len(self.childObjects) == 1:
+            self.buttonDelete.set_sensitive(False)
 
     def setElementValue(self, attrib, value):
         self.switchValue.set_text(value)
@@ -189,22 +197,31 @@ class Switch(gtk.EventBox):
         self.conditionValue.disconnect(self.signalHandler)
         self.conditionValue.set_text(self.notebook.get_tab_label_text(self.notebook.get_nth_page(page_num)))
         self.signalHandler = self.conditionValue.connect('changed', self.conditionChanged)
+        self.showProperties(None, None)
 
     def conditionChanged(self, w):
         self.notebook.set_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()),self.conditionValue.get_text())
 
     def getApp(self):
-        if self.switchValue.get_text() == '':
-            return ''
         app = '<Switch value="' + self.switchValue.get_text() + '">'
-        someContent = False
         for page in self.notebook:
+            app += '<Case condition="' + self.notebook.get_tab_label_text(page) + '">'
             if page.content != None:
-                app += '<Case condition="' + self.notebook.get_tab_label_text(page) + '">'
                 app += page.content.getApp()
-                app += '</Case>'
-                someContent = True
-        if not someContent:
-            return ''
+            app += '</Case>'
         app += '</Switch>'
         return app
+
+    @staticmethod
+    def validate(element):
+        value = element.get('value')
+        if value == '' or not value.strip():
+            return False, 'Missing value in switch.'
+        for child in element.iter('Case'):
+            if child.getparent() == element:
+                caseValue = child.get('condition')
+                if caseValue == '' or not caseValue.strip():
+                    return False, 'Missing case value in switch.'
+                if child.getchildren() == []:
+                    return False, 'Missing content for case in switch. Add some or delete case.'
+        return True, None

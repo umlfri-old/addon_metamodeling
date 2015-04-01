@@ -140,8 +140,6 @@ class Proportional(gtk.EventBox):
         self.align.yAlign = combo.get_active()
 
     def getApp(self):
-        if self.ratio.get_text() == '':
-            return ''
         app = '<Proportional ratio="' + self.ratio.get_text() + '" '
         if self.align.isAlignSet():
             app += self.align.getXMLFormat()
@@ -151,3 +149,14 @@ class Proportional(gtk.EventBox):
             app += self.childObjects[0].content.getApp()
         app += '</Proportional>'
         return app
+
+    @staticmethod
+    def validate(element):
+        ratio = element.get('ratio').split(':')
+        if len(ratio) != 2:
+            return False, 'Invalid ratio format. Example of correct ratio is: 1:2.'
+        if not ratio[0].isdigit() or not ratio[1].isdigit():
+            return False, 'Invalid ratio format. Example of correct ratio is: 1:2.'
+        if element.getchildren() == []:
+            return False, 'Missing content for proportional. Add some or delete proportional.'
+        return True, None

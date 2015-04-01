@@ -85,3 +85,10 @@ class RectangleSide(gtk.VBox):
     def getXMLFormat(self):
         return str(int(self.sizeSpin.get_value())) + ' ' + 'rounded_side'
 
+    def setSide(self, string):
+        size, type = string.split()
+        self.sizeSpin.set_value(int(size))
+        if type == 'rounded_side':
+            self.combo.set_active(0)
+        self.checkBox.set_active(True)
+
