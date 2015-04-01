@@ -2,6 +2,7 @@
 
 import os.path
 import gtk
+import appearance
 from export.export import Export
 from chooseConnections import ChooseConnections
 from iconChooser import IconChooser

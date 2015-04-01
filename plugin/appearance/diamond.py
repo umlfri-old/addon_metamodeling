@@ -7,6 +7,7 @@ from colorChooserButton import ColorChooserButton
 from pythonValue import PythonValue
 from elementValue import ElementValue
 from shadow import Shadow
+from align import Align
 import constants
 
 class Diamond(gtk.EventBox):
@@ -177,6 +178,6 @@ class Diamond(gtk.EventBox):
             app += '</Diamond>'
         else:
             app += '</Ellipse>'
-        if self.shadow.padding > 0 and self.shadow.buttonColor.color:
+        if self.shadow.padding > 0 or self.shadow.buttonColor.color:
             app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
         return app

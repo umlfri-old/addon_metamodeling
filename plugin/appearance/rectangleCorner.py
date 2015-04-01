@@ -117,3 +117,18 @@ class RectangleCorner(gtk.VBox):
         if self.color.color:
             string += ' ' + self.color.color
         return string
+
+    def setCorner(self, string):
+        if len(string.split()) > 2:
+            size, type, color = string.split()
+        else:
+            size, type = string.split()
+            color = None
+        self.sizeSpin.set_value(int(size))
+        if type == 'note_corner':
+            self.combo.set_active(0)
+        elif type == 'rounded_corner':
+            self.combo.set_active(1)
+        if color:
+            self.color.setColor(color)
+        self.checkBox.set_active(True)

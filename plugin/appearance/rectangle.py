@@ -137,6 +137,6 @@ class Rectangle(Diamond):
         if self.childObjects[0].content != None:
             app += self.childObjects[0].content.getApp()
         app += '</Rectangle>'
-        if self.shadow.padding > 0 and self.shadow.buttonColor.color:
+        if self.shadow.padding > 0 or self.shadow.buttonColor.color:
             app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
         return app

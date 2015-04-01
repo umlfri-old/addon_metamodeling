@@ -20,6 +20,7 @@ from appearance.connectionLine import ConnectionLine
 from appearance.lineAndArrowVBox import LineAndArrowVBox
 from appearance.connectionArrow import ConnectionArrow
 from appearance.labelScrolledWindow import LabelScrolledWindow
+from appearance.appBuilder import AppBuilder
 import constants
 from lxml import etree
 
@@ -53,6 +54,7 @@ class AppearanceManager:
         self.rootObject = None
         self.selected = None #selected element or connection in meta editor
         self.lastHighligted = None
+        self.builder = AppBuilder()
 
     def close(self, widget):
         self.closed = True
@@ -85,27 +87,16 @@ class AppearanceManager:
         if self.closed:
             self.init_Window()
             if self.selected.object.type.name == constants.CONNECTION_OBJECT_NAME:
-                self.intiConnectionWin()
+                self.initConnectionWin()
             self.window.show()
             self.closed = False
         else:
             self.close(self.window)
             self.init_Window()
             self.show()
-        try:
-            root = etree.fromstring(self.selected.object.values['appearance'])
-            for child in root:
-            #print child.tag, child.attrib
-        #    self.printChild(child)
-                if child.tag == 'HBox':
-                    self.widgetSelected = True
-                    self.selectedButton = self.wTree.get_widget('button_horizontal_box')
-                    for child in self.wTree.get_widget('vboxContent').children():
-                        self.addContent(child,None)
-        except etree.XMLSyntaxError:
-            print 'no app'
+        self.builder.buildApp(self)
 
-    def intiConnectionWin(self):
+    def initConnectionWin(self):
         self.wTree.get_widget("vbox1").remove(self.wTree.get_widget("scrolledwindow1"))
         self.notebook = gtk.Notebook()
 
@@ -374,6 +365,7 @@ class AppearanceManager:
             self.notebook.remove_page(self.notebook.get_current_page())
             self.notebook.set_current_page(0)
             self.notebookHandler = self.notebook.connect('switch-page', self.switchPage)
+            self.clearProperties()
         dialog.destroy()
 
     def saveApp(self, widget):
@@ -385,11 +377,11 @@ class AppearanceManager:
             box = self.notebook.get_nth_page(0).get_child().get_child()
             self.app += box.getApp()
             for i in range(1, self.notebook.get_n_pages()-1):
+                position = self.notebook.get_nth_page(i).getPosition()#position.get_active_text()
+                self.app += '<Label position="' + position + '" >'
                 if self.notebook.get_nth_page(i).get_child().get_child().content != None:
-                    position = self.notebook.get_nth_page(i).position.get_active_text()
-                    self.app += '<Label position="' + position + '" >'
                     self.app +=  self.notebook.get_nth_page(i).get_child().get_child().content.getApp()
-                    self.app += '</Label>'
+                self.app += '</Label>'
         self.app += '</Appearance>'
         self.selected.object.values['appearance'] = self.app
         print self.selected.object.values['appearance']

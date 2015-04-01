@@ -79,12 +79,14 @@ class Sizer(gtk.EventBox):
         self.add(eB)
 
     def changeValue(self, spin):
-        if spin == self.minHeightSpin or spin == self.minWidthSpin:
+        if spin == self.minHeightSpin or spin == self.minWidthSpin or spin == self.maxHeightSpin or spin == self.maxWidthSpin:
             self.widthSpin.set_value(0)
             self.heightSpin.set_value(0)
         else:
             self.minWidthSpin.set_value(0)
             self.minHeightSpin.set_value(0)
+            self.maxWidthSpin.set_value(0)
+            self.maxHeightSpin.set_value(0)
 
     def deleteClicked(self, widget, w):
         dialog = gtk.MessageDialog(None,0,gtk.MESSAGE_QUESTION,gtk.BUTTONS_YES_NO,'Delete '+self.containerName+' with whole content?')
@@ -193,3 +195,31 @@ class Sizer(gtk.EventBox):
             if child.content:
                 app += child.content.getApp()
         return app+' </Sizer>'
+
+    @staticmethod
+    def validate(element):
+        minwidth = element.get('minwidth')
+        minheight = element.get('minheight')
+        width = element.get('width')
+        height = element.get('height')
+        maxwidth = element.get('maxwidth')
+        maxheight = element.get('maxheight')
+        if minwidth == minheight == width == height == maxwidth == maxheight == None:
+            return False, 'Sizer values not set. Set some or delete sizer.'
+        if element.getchildren() == []:
+            return False, 'Missing content for sizer. Add some or delete sizer.'
+        return True, None
+
+    def setValues(self, minwidth, minheight, maxwidth, maxheight, width, height):
+        if minwidth:
+            self.minWidthSpin.set_value(int(minwidth))
+        if minheight:
+            self.minHeightSpin.set_value(int(minheight))
+        if maxwidth:
+            self.maxWidthSpin.set_value(int(maxwidth))
+        if maxheight:
+            self.maxHeightSpin.set_value(int(maxheight))
+        if width:
+            self.widthSpin.set_value(int(width))
+        if height:
+            self.heightSpin.set_value(int(height))

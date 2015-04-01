@@ -91,10 +91,6 @@ class Icon(DragSourceEventBox):
                 self.manager.clearAll()
             else:
                 self.parentContainer.deleteChild(self)
-                #for c in self.parentContainer.box.children():
-                #    if c.content == self:
-                #        self.parentContainer.box.remove(c)
-                #        self.parentContainer.childObjects.remove(c)
                 self.manager.clearProperties()
         dialog.destroy()
 
@@ -115,40 +111,25 @@ class Icon(DragSourceEventBox):
             self.parentContainer.reorder(newPosition, source)
         return True
 
-    def xChanged(self, combo):
-        self.align.xAlign = combo.get_active()
-        if combo.get_active() == 0:
-            self.icon.set_alignment(0.0, self.align.yValue)
-            self.align.xValue = 0.0
-        elif combo.get_active() == 1:
-            self.icon.set_alignment(0.5, self.align.yValue)
-            self.align.xValue = 0.5
-        elif combo.get_active() == 2:
-            self.icon.set_alignment(1.0, self.align.yValue)
-            self.align.xValue = 1.0
-        elif combo.get_active() ==3:
-            self.icon.set_alignment(0.0, self.align.yValue)
-            self.align.xValue = 0.0
+    def xChanged(self):
+        self.icon.set_alignment(self.align.xValue, self.align.yValue)
 
-    def yChanged(self, combo):
-        self.align.yAlign = combo.get_active()
-        if combo.get_active() == 0:
-            self.icon.set_alignment(self.align.xValue, 0.0)
-            self.align.yValue = 0.0
-        elif combo.get_active() == 1:
-            self.icon.set_alignment(self.align.xValue, 0.5)
-            self.align.yValue = 0.5
-        elif combo.get_active() == 2:
-            self.icon.set_alignment(self.align.xValue, 1.0)
-            self.align.yValue = 1.0
-        elif combo.get_active() == 3:
-            self.icon.set_alignment(self.align.xValue, 0.5)
-            self.align.yValue = 0.5
+    def yChanged(self):
+        self.icon.set_alignment(self.align.xValue, self.align.yValue)
 
     def getApp(self):
-        app = '<Icon filename="'+self.path+'" />'
-        if self.shadow.padding > 0 and self.shadow.buttonColor.color:
+        filename = self.path
+        if filename == None:
+            filename = ''
+        app = '<Icon filename="'+filename+'" />'
+        if self.shadow.padding > 0 or self.shadow.buttonColor.color:
             app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
         if self.align.isAlignSet():
             app = '<Align ' + self.align.getXMLFormat() + '>' + app + '</Align>'
         return app
+
+    @staticmethod
+    def validate(element):
+        if element.get('filename') == '':
+            return False, 'Missing filename for icon. Choose some or delete icon.'
+        return True, None

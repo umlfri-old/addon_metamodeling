@@ -16,7 +16,7 @@ class Loop(gtk.EventBox):
         self.expand = None
         if type(self.parentContainer).__name__ == 'Container':
             self.expand = Expand(self)
-        self.loopCombo = None
+        self.loopCombo = gtk.combo_box_new_text()
         self.selectedLoop = None
 
         newVbox = gtk.VBox()
@@ -173,11 +173,20 @@ class Loop(gtk.EventBox):
         return True
 
     def getApp(self):
-        if self.loopCombo.get_active_text():
-            app = '<Loop collection="' + self.loopCombo.get_active_text() + '">'
-        else:
-            return ''
+        collection = self.loopCombo.get_active_text()
+        if not collection:
+            collection = ''
+        app = '<Loop collection="' + collection + '">'
         if self.childObjects[0].content != None:
             app += self.childObjects[0].content.getApp()
         app += '</Loop>'
         return app
+
+    @staticmethod
+    def validate(element):
+        value = element.get('collection')
+        if value == '' or not value.strip():
+            return False, 'Missing value in loop.'
+        if element.getchildren() == []:
+            return False, 'Missing content for loop. Add some or delete loop.'
+        return True, None
