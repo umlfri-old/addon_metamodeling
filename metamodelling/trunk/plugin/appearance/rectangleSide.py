@@ -14,6 +14,8 @@ class RectangleSide(gtk.VBox):
         self.pack_start(hBox)
         self.combo = gtk.combo_box_new_text()
         self.combo.append_text('Rounded side')
+        self.combo.append_text('Beak side')
+        self.combo.append_text('Sidelong side')
         self.combo.set_active(0)
         self.sizeSpin = gtk.SpinButton(gtk.Adjustment(0,0,10000,1,10,0),0.0,0)
         self.sizeSpin.set_editable(False)
@@ -83,12 +85,22 @@ class RectangleSide(gtk.VBox):
         self.detailsVBox.hide()
 
     def getXMLFormat(self):
-        return str(int(self.sizeSpin.get_value())) + ' ' + 'rounded_side'
+        if self.combo.get_active_text() == 'Rounded side':
+            type = 'rounded_side'
+        elif self.combo.get_active_text() == 'Beak side':
+            type = 'beak_side'
+        elif self.combo.get_active_text() == 'Sidelong side':
+            type = 'sidelong_side'
+        return str(int(self.sizeSpin.get_value())) + ' ' + type
 
     def setSide(self, string):
         size, type = string.split()
         self.sizeSpin.set_value(int(size))
         if type == 'rounded_side':
             self.combo.set_active(0)
+        elif type == 'beak_side':
+            self.combo.set_active(1)
+        elif type == 'sidelong_side':
+            self.combo.set_active(2)
         self.checkBox.set_active(True)
 
