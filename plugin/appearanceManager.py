@@ -267,8 +267,11 @@ class AppearanceManager:
     def windowResized(self, widget):
         if self.rootObject:
             self.redraw(self.rootObject)
-        if self.notebook:
-            self.notebook.queue_draw()
+        try:
+            if self.notebook:
+                self.notebook.queue_draw()
+        except AttributeError:
+            pass
 
     def redraw(self, node):
         if node:
