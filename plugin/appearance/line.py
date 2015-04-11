@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from dragSourceEventBox import DragSourceEventBox
 from colors2 import colors
 from shadow import Shadow
@@ -7,6 +8,7 @@ from pythonValue import PythonValue
 from elementValue import ElementValue
 from expand import Expand
 from colorChooserButton import ColorChooserButton
+from valueValidator import ValueValidator
 
 class Line(DragSourceEventBox):
     def __init__(self, manager, parent):
@@ -81,6 +83,7 @@ class Line(DragSourceEventBox):
         gc.set_values(line_style=gtk.gdk.LINE_SOLID)
         gc.set_values(line_width=1)
         tempColor = gc.foreground
+        x, y = self.window.get_size()
         if self.buttonColor.color:
             if not self.buttonColor.color.startswith('#'):
                 try:
@@ -88,10 +91,10 @@ class Line(DragSourceEventBox):
                 except ValueError:
                     gc.foreground = drawArea.get_colormap().alloc(gtk.gdk.Color('#'+self.buttonColor.color))
             else:
-                gc.foreground = drawArea.get_colormap().alloc(gtk.gdk.Color("black"))
+                    gc.foreground = drawArea.get_colormap().alloc(gtk.gdk.Color("black"))
         else:
             gc.foreground = drawArea.get_colormap().alloc(gtk.gdk.Color("black"))
-        x, y = self.window.get_size()
+
         if self.lineType == 'horizontal':
             if x-75 < 40:
                 x1 = 40
@@ -191,14 +194,15 @@ class Line(DragSourceEventBox):
             self.exposeLine(self.drawArea, None)
 
     def getApp(self):
-        app = '<Line '
+        app = etree.Element('Line')
         if self.lineType != '':
-            app += 'type="' + self.lineType + '" '
+            app.attrib['type'] = self.lineType
         if self.buttonColor.color:
-            app += 'color="' + self.buttonColor.color + '" '
-        app += '/>'
+            app.attrib['color'] = self.buttonColor.getColor()
         if self.shadow.padding > 0 or self.shadow.buttonColor.color:
-            app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
+            shadow = self.shadow.getXMLFormat()
+            shadow.append(app)
+            app = shadow
         return app
 
     def setLineType(self, type):
@@ -208,3 +212,11 @@ class Line(DragSourceEventBox):
         if type == 'vertical':
             self.comboType.set_active(1)
         self.changeLineType(self.comboType)
+
+    @staticmethod
+    def validate(element, dataElement):
+        color = element.get('color')
+        if color:
+            if not ValueValidator.validate(color, dataElement):
+                return False, 'Unknown element attribute for line color: ' + color
+        return True, None

@@ -16,7 +16,7 @@ class ElementValue(gtk.EventBox):
         label = gtk.Label('   Choose from '+self.widget.manager.selected.object.name+' attributes   ')
         combo = gtk.combo_box_new_text()
         for x in eval(self.widget.manager.selected.object.values['attributes']):
-            combo.append_text('#self.'+x['attName'])
+            combo.append_text(('#self.'+x['attName']).replace(' ',''))
         dialog = gtk.Dialog(self.attrib,
                            None,
                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,

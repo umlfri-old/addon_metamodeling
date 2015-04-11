@@ -38,11 +38,15 @@ class ColorChooserButton(gtk.Button):
         cdia.destroy()
 
     def setColor(self, color):
-        self.color = color
-        if not color.startswith('#'):
-            if color not in colors.values():
-                self.set_label('#'+color)
-            else:
-                self.set_label(color)
+        if color.startswith('##'):
+            self.color = color[2:]
+            self.set_label(color[1:])
         else:
+            self.color = color
             self.set_label(color)
+
+    def getColor(self):
+        if not self.color.startswith('#'):
+            if self.color not in  colors.values():
+                return '##' + self.color
+        return self.color

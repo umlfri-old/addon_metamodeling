@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from expand import Expand
@@ -112,31 +113,31 @@ class Rectangle(Diamond):
         pass
 
     def getApp(self):
-        app = '<Rectangle '
+        app = etree.Element('Rectangle')
         if self.fillColorButton.color:
-            app += 'fill="' + self.fillColorButton.color + '" '
+            app.attrib['fill'] = self.fillColorButton.getColor()
         if self.borderColorButton.color:
-            app += 'border="' + self.borderColorButton.color + '" '
+            app.attrib['border'] = self.borderColorButton.getColor()
         if self.leftTopCorner.checkBox.get_active():
-            app += 'lefttop="' + self.leftTopCorner.getXMLFormat() + '" '
+            app.attrib['lefttop'] = self.leftTopCorner.getXMLFormat()
         if self.rightTopCorner.checkBox.get_active():
-            app += 'righttop="' + self.rightTopCorner.getXMLFormat() + '" '
+            app.attrib['righttop'] = self.rightTopCorner.getXMLFormat()
         if self.leftBotCorner.checkBox.get_active():
-            app += 'leftbottom="' + self.leftBotCorner.getXMLFormat() + '" '
+            app.attrib['leftbottom'] = self.leftBotCorner.getXMLFormat()
         if self.rightBotCorner.checkBox.get_active():
-            app += 'rightbottom="' + self.rightBotCorner.getXMLFormat() + '" '
+            app.attrib['rightbottom'] = self.rightBotCorner.getXMLFormat()
         if self.leftSide.checkBox.get_active():
-            app += 'left="' + self.leftSide.getXMLFormat() + '" '
+            app.attrib['left'] = self.leftSide.getXMLFormat()
         if self.rightSide.checkBox.get_active():
-            app += 'right="' + self.rightSide.getXMLFormat() + '" '
+            app.attrib['right'] = self.rightSide.getXMLFormat()
         if self.topSide.checkBox.get_active():
-            app += 'top="' + self.topSide.getXMLFormat() + '" '
+            app.attrib['top'] = self.topSide.getXMLFormat()
         if self.botSide.checkBox.get_active():
-            app += 'bottom="' + self.botSide.getXMLFormat() + '" '
-        app += '>'
+            app.attrib['bottom'] = self.botSide.getXMLFormat()
         if self.childObjects[0].content != None:
-            app += self.childObjects[0].content.getApp()
-        app += '</Rectangle>'
+            app.append(self.childObjects[0].content.getApp())
         if self.shadow.padding > 0 or self.shadow.buttonColor.color:
-            app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
+            shadow = self.shadow.getXMLFormat()
+            shadow.append(app)
+            return shadow
         return app

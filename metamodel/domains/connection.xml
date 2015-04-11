@@ -2,8 +2,11 @@
     <Attribute id="name" name="Name" >
 		<Str/>
 	</Attribute> 
-	<Attribute id="icon" name="Icon" >
+	<Attribute id="icon" name="Icon" hidden="true">
 		<Str default="icons/connection.png"></Str>
+	</Attribute>
+    <Attribute id="identify" name="Identify" >
+		<Str/>
 	</Attribute>
 	<Attribute id="appearance" name="Appearance" hidden="true">
 		<Text/>
@@ -26,6 +29,9 @@
                 <Attribute id="default" name="Default" >
 		            <Str/>
 	            </Attribute>
+                <Attribute id="visible" name="Hidden" >
+                    <Bool default="False"/>
+                </Attribute>
         	</Domain>
 		</List>
     </Attribute>

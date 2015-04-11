@@ -1,4 +1,5 @@
 import gtk
+from lxml import etree
 
 
 class Align(gtk.VBox):
@@ -64,7 +65,8 @@ class Align(gtk.VBox):
             return False
 
     def getXMLFormat(self):
-        string = 'align="'
+        align = etree.Element('Align')
+        string = ''
         if self.xAlign == 0:
             string += 'left '
         elif self.xAlign == 1:
@@ -77,8 +79,8 @@ class Align(gtk.VBox):
             string += 'middle'
         elif self.yAlign == 2:
             string += 'bottom'
-        string += '" '
-        return  string
+        align.attrib['align'] = string
+        return  align
 
     def setAlign(self, align):
         align = align.split()

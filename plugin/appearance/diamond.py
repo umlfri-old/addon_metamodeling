@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from expand import Expand
@@ -8,6 +9,7 @@ from pythonValue import PythonValue
 from elementValue import ElementValue
 from shadow import Shadow
 from align import Align
+from valueValidator import ValueValidator
 import constants
 
 class Diamond(gtk.EventBox):
@@ -164,20 +166,29 @@ class Diamond(gtk.EventBox):
 
     def getApp(self):
         if self.containerName == 'Diamond':
-            app = '<Diamond '
+            app = etree.Element('Diamond')
         else:
-            app = '<Ellipse '
+            app = etree.Element('Ellipse')
         if self.fillColorButton.color:
-            app += 'fill="' + self.fillColorButton.color + '" '
+            app.attrib['fill'] = self.fillColorButton.getColor()
         if self.borderColorButton.color:
-            app += 'border="' + self.borderColorButton.color + '" '
-        app += '>'
+            app.attrib['border'] = self.borderColorButton.getColor()
         if self.childObjects[0].content != None:
-            app += self.childObjects[0].content.getApp()
-        if self.containerName == 'Diamond':
-            app += '</Diamond>'
-        else:
-            app += '</Ellipse>'
+            app.append(self.childObjects[0].content.getApp())
         if self.shadow.padding > 0 or self.shadow.buttonColor.color:
-            app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
+            shadow = self.shadow.getXMLFormat()
+            shadow.append(app)
+            return shadow
         return app
+
+    @staticmethod
+    def validate(element, dataElement):
+        fill = element.get('fill')
+        if fill:
+            if not ValueValidator.validate(fill, dataElement):
+                return False, 'Unknown element attribute for fill color: ' + fill
+        border = element.get('border')
+        if border:
+            if not ValueValidator.validate(border, dataElement):
+                return False, 'Unknown element attribute for border color: ' + border
+        return True, None

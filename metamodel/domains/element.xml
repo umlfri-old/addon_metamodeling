@@ -8,6 +8,16 @@
     <Attribute id="joiner" name="Joiner" >
 		<Str/>
 	</Attribute>
+    <Attribute id="layer" name="Layer" >
+		<Enum default="Middle">
+			<Value>Bottom</Value>
+			<Value>Middle</Value>
+			<Value>Top</Value>
+		</Enum>
+	</Attribute>
+    <Attribute id="identify" name="Identify" >
+		<Str/>
+	</Attribute>
 	<Attribute id="appearance" name="Appearance" hidden="true">
 		<Text/>
 	</Attribute>

@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from align import Align
@@ -133,25 +134,25 @@ class Proportional(gtk.EventBox):
             self.parentContainer.reorder(newPosition, source)
         return True
 
-    def xChanged(self, combo):
-        self.align.xAlign = combo.get_active()
+    def xChanged(self):
+        pass
 
-    def yChanged(self, combo):
-        self.align.yAlign = combo.get_active()
+    def yChanged(self):
+        pass
 
     def getApp(self):
-        app = '<Proportional ratio="' + self.ratio.get_text() + '" '
+        app = etree.Element('Proportional')
+        app.attrib['ratio'] = self.ratio.get_text()
         if self.align.isAlignSet():
-            app += self.align.getXMLFormat()
-        app += 'size="' + self.size.get_active_text() + '" '
-        app += ' >'
+            align = self.align.getXMLFormat()
+            app.attrib['align'] = align.get('align')
+        app.attrib['size'] = self.size.get_active_text()
         if self.childObjects[0].content != None:
-            app += self.childObjects[0].content.getApp()
-        app += '</Proportional>'
+            app.append(self.childObjects[0].content.getApp())
         return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         ratio = element.get('ratio').split(':')
         if len(ratio) != 2:
             return False, 'Invalid ratio format. Example of correct ratio is: 1:2.'

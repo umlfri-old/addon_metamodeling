@@ -11,7 +11,7 @@ class LabelScrolledWindow(gtk.ScrolledWindow):
         self.position.set_active(0)
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         if element.getchildren() == []:
             return False, 'Missing content for label. Add some or delete label.'
         return True, None

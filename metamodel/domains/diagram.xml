@@ -26,6 +26,9 @@
                 <Attribute id="default" name="Default" >
 		            <Str/>
 	            </Attribute>
+                <Attribute id="visible" name="Hidden" >
+                    <Bool default="False"/>
+                </Attribute>
         	</Domain>
 		</List>
     </Attribute>

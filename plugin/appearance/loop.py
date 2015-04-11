@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from expand import Expand
@@ -121,6 +122,8 @@ class Loop(gtk.EventBox):
                     elementName = widget.selectedLoop[6:]
                 elif str(widget.selectedLoop).startswith('#'):
                     elementName = widget.selectedLoop[1:]
+                for ele in widget.loopCombo.get_model():
+                    self.loopCombo.append_text(ele[0])
                 return self.findElementByName(self.manager.selected.object, elementName)
             else:
                 widget = widget.parent
@@ -173,17 +176,17 @@ class Loop(gtk.EventBox):
         return True
 
     def getApp(self):
+        app = etree.Element('Loop')
         collection = self.loopCombo.get_active_text()
         if not collection:
             collection = ''
-        app = '<Loop collection="' + collection + '">'
+        app.attrib['collection'] = collection
         if self.childObjects[0].content != None:
-            app += self.childObjects[0].content.getApp()
-        app += '</Loop>'
+            app.append(self.childObjects[0].content.getApp())
         return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         value = element.get('collection')
         if value == '' or not value.strip():
             return False, 'Missing value in loop.'

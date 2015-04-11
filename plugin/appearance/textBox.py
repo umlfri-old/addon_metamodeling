@@ -1,6 +1,7 @@
 import gtk
 import os
 import pango
+from lxml import etree
 from dragSourceEventBox import DragSourceEventBox
 from align import Align
 from shadow import Shadow
@@ -8,6 +9,7 @@ from elementValue import ElementValue
 from pythonValue import PythonValue
 from expand import Expand
 from colorChooserButton import ColorChooserButton
+from valueValidator import ValueValidator
 
 class TextBox(DragSourceEventBox):
     def __init__(self, manager, parent):
@@ -42,6 +44,7 @@ class TextBox(DragSourceEventBox):
         eB.set_border_width(2)
         hBox = gtk.HBox()
         label = gtk.Label('  Text:  ')
+        self.set_can_focus(True)
         self.textEvent = gtk.EventBox()
         self.textAlign = gtk.Alignment(self.align.xValue, 0.5, 1.0, 1.0)
         self.text = gtk.Label('')
@@ -199,17 +202,20 @@ class TextBox(DragSourceEventBox):
             self.text.modify_fg(gtk.STATE_NORMAL, newColor)
 
     def getApp(self):
-        app = '<TextBox '
-        app += 'text="' + self.textEntry.get_text() + '" '
+        app = etree.Element('TextBox')
+        app.attrib['text'] = self.textEntry.get_text()
         if self.buttonTextColor.color:
-            app += 'color="' + self.buttonTextColor.color + '" '
+            app.attrib['color'] = self.buttonTextColor.getColor()
         if self.buttonFont.get_label() != '':
-            app += 'font="' + self.buttonFont.get_label() + '" '
-        app += '/>'
+            app.attrib['font'] = self.buttonFont.get_label()
         if self.shadow.padding > 0 or self.shadow.buttonColor.color:
-            app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
+            shadow = self.shadow.getXMLFormat()
+            shadow.append(app)
+            app = shadow
         if self.align.isAlignSet():
-            app = '<Align ' + self.align.getXMLFormat() + '>' + app + '</Align>'
+            align = self.align.getXMLFormat()
+            align.append(app)
+            app = align
         return app
 
     def setTextFont(self, font):
@@ -225,4 +231,23 @@ class TextBox(DragSourceEventBox):
             except ValueError:
                 self.text.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color('#'+color))
         else:
-            self.text.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color('black'))
+            if color.startswith('##'):
+                self.text.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color(color[1:]))
+            else:
+                self.text.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color('black'))
+
+    @staticmethod
+    def validate(element, dataElement):
+        text = element.get('text')
+        if text:
+            if not ValueValidator.validate(text, dataElement):
+                return False, 'Unknown element attribute for text value: ' + text
+        color = element.get('color')
+        if color:
+            if not ValueValidator.validate(color, dataElement):
+                return False, 'Unknown element attribute for text color: ' + color
+        font = element.get('font')
+        if font:
+            if not ValueValidator.validate(font, dataElement):
+                return False, 'Unknown element attribute for text font: ' + font
+        return True, None

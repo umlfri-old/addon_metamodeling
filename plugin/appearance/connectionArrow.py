@@ -1,10 +1,12 @@
 import gtk
 import os
+from lxml import etree
 from dragSourceEventBox import DragSourceEventBox
 from colors2 import colors
 from pythonValue import PythonValue
 from elementValue import ElementValue
 from colorChooserButton import ColorChooserButton
+from valueValidator import ValueValidator
 
 class ConnectionArrow(DragSourceEventBox):
     def __init__(self, manager, parent):
@@ -59,6 +61,7 @@ class ConnectionArrow(DragSourceEventBox):
         label = gtk.Label(' \n  Arrow  \n ')
         self.drawArea = gtk.DrawingArea()
         self.drawArea.connect('expose-event',self.exposeLine)
+        self.drawArea.set_size_request(100, 30)
 
         iconEvent = gtk.EventBox()
         iconEvent.set_border_width(2)
@@ -68,7 +71,7 @@ class ConnectionArrow(DragSourceEventBox):
         iconEvent.add(icon)
 
         self.box.pack_start(label,False)
-        self.box.pack_start(self.drawArea,True)
+        self.box.pack_start(self.drawArea,True, False,0)
         self.box.pack_end(iconEvent,False,True,2)
 
     def exposeLine(self, drawArea, data):
@@ -237,17 +240,17 @@ class ConnectionArrow(DragSourceEventBox):
         self.exposeLine(self.drawArea, None)
 
     def getApp(self):
-        app = '<ConnectionArrow index="'
+        app = etree.Element('ConnectionArrow')
         if self.arrowDirection.get_active_text() == 'src -> dest':
-            app += '-1" '
+            index = '-1'
         else:
-            app += '0" '
-        app += 'style="' + self.styleDict[self.arrowStyle.get_active_text()] + '" '
+            index = '0'
+        app.attrib['index'] = index
+        app.attrib['style'] = self.styleDict[self.arrowStyle.get_active_text()]
         if self.arrowColor.color:
-            app += 'color="' + self.arrowColor.color + '" '
+            app.attrib['color'] = self.arrowColor.getColor()
         if self.fillColor.color:
-            app += 'fill="' + self.fillColor.color + '" '
-        app += '/>'
+            app.attrib['fill'] = self.fillColor.getColor()
         return app
 
     def setIndex(self, index):
@@ -277,3 +280,15 @@ class ConnectionArrow(DragSourceEventBox):
 
     def setFillColor(self, color):
         self.fillColor.setColor(color)
+
+    @staticmethod
+    def validate(element, dataElement):
+        color = element.get('color')
+        if color:
+            if not ValueValidator.validate(color, dataElement):
+                return False, 'Unknown element attribute for arrow color: ' + color
+        fill = element.get('fill')
+        if fill:
+            if not ValueValidator.validate(fill, dataElement):
+                return False, 'Unknown element attribute for arrow fill: ' + fill
+        return True, None
