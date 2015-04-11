@@ -17,11 +17,11 @@ class Padding(gtk.EventBox):
         self.expand = None
         if type(self.parentContainer).__name__ == 'Container':
             self.expand = Expand(self)
-        self.paddingSpin = gtk.SpinButton(gtk.Adjustment(0,0,10000,1,10,0),0.0,0)
-        self.leftSpin = gtk.SpinButton(gtk.Adjustment(0,0,10000,1,10,0),0.0,0)
-        self.rightSpin = gtk.SpinButton(gtk.Adjustment(0,0,10000,1,10,0),0.0,0)
-        self.topSpin = gtk.SpinButton(gtk.Adjustment(0,0,10000,1,10,0),0.0,0)
-        self.bottomSpin = gtk.SpinButton(gtk.Adjustment(0,0,10000,1,10,0),0.0,0)
+        self.paddingSpin = gtk.SpinButton(gtk.Adjustment(0,-10000,10000,1,10,0),0.0,0)
+        self.leftSpin = gtk.SpinButton(gtk.Adjustment(0,-10000,10000,1,10,0),0.0,0)
+        self.rightSpin = gtk.SpinButton(gtk.Adjustment(0,-10000,10000,1,10,0),0.0,0)
+        self.topSpin = gtk.SpinButton(gtk.Adjustment(0,-10000,10000,1,10,0),0.0,0)
+        self.bottomSpin = gtk.SpinButton(gtk.Adjustment(0,-10000,10000,1,10,0),0.0,0)
 
         self.paddingSpin.connect('value-changed', self.changePadding)
         self.leftSpin.connect('value-changed', self.changePadding)
@@ -90,13 +90,23 @@ class Padding(gtk.EventBox):
             self.topSpin.set_value(0)
             self.bottomSpin.set_value(0)
             v = int(spin.get_value())
-            self.borders.set_padding(v,v,v,v)
+            if v > -1:
+                self.borders.set_padding(v,v,v,v)
         else:
             self.paddingSpin.set_value(0)
-            self.borders.set_padding(int(self.topSpin.get_value()),
-                                     int(self.bottomSpin.get_value()),
-                                     int(self.leftSpin.get_value()),
-                                     int(self.rightSpin.get_value()))
+            top = int(self.topSpin.get_value())
+            bot = int(self.bottomSpin.get_value())
+            left = int(self.leftSpin.get_value())
+            right = int(self.rightSpin.get_value())
+            if top < 0:
+                top = 0
+            if bot < 0:
+                bot = 0
+            if left < 0:
+                left = 0
+            if right < 0:
+                right = 0
+            self.borders.set_padding(top,bot,left,right)
 
     def deleteClicked(self, widget, w):
         dialog = gtk.MessageDialog(None,0,gtk.MESSAGE_QUESTION,gtk.BUTTONS_YES_NO,'Delete '+self.containerName+' with whole content?')
