@@ -115,7 +115,10 @@ class RectangleCorner(gtk.VBox):
         if self.combo.get_active_text() == 'Rounded corner':
             string += 'rounded_corner'
         if self.color.color:
-            string += ' ' + self.color.color
+            color = self.color.getColor()
+            if color.startswith('##'):
+                color = color [2:]
+            string += ' ' + color
         return string
 
     def setCorner(self, string):

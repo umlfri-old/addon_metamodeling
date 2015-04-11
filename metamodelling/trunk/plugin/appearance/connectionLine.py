@@ -1,10 +1,12 @@
 import gtk
 import os
+from lxml import etree
 from dragSourceEventBox import DragSourceEventBox
 from colors2 import colors
 from pythonValue import PythonValue
 from elementValue import ElementValue
 from colorChooserButton import ColorChooserButton
+from valueValidator import ValueValidator
 
 class ConnectionLine(DragSourceEventBox):
     def __init__(self, manager, parent):
@@ -173,14 +175,13 @@ class ConnectionLine(DragSourceEventBox):
             self.exposeLine(self.drawArea, None)
 
     def getApp(self):
-        app = '<ConnectionLine '
+        app = etree.Element('ConnectionLine')
         if self.buttonColor.color:
-            app += 'color="' + self.buttonColor.color + '" '
-        app += 'style="' + self.lineStyle.get_active_text() + '" '
-        app += 'width="' + str(int(self.widthSpin.get_value())) + '" '
-        app += 'begin="' + str(self.beginSpin.get_value()) + '" '
-        app += 'end="' + str(self.endSpin.get_value()) + '" '
-        app += '/>'
+            app.attrib['color'] = self.buttonColor.getColor()
+        app.attrib['style'] = self.lineStyle.get_active_text()
+        app.attrib['width'] = str(int(self.widthSpin.get_value()))
+        app.attrib['begin'] = str(self.beginSpin.get_value())
+        app.attrib['end'] = str(self.endSpin.get_value())
         return app
 
     def setLineColor(self, color):
@@ -208,3 +209,11 @@ class ConnectionLine(DragSourceEventBox):
         self.endSpin.disconnect(self.endHandler)
         self.endSpin.set_value(float(end))
         self.endHandler = self.endSpin.connect('changed', self.longChanged)
+
+    @staticmethod
+    def validate(element, dataElement):
+        color = element.get('color')
+        if color:
+            if not ValueValidator.validate(color, dataElement):
+                return False, 'Unknown element attribute for line color: ' + color
+        return True, None

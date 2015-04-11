@@ -13,7 +13,7 @@ from org.umlfri.api.mainLoops import GtkMainLoop
 def pluginMain(interface):
     exportWindow = Export(interface)
     iconChooser = IconChooser(interface)
-    test = AppearanceManager(interface)
+    appMng = AppearanceManager(interface)
 
     interface.gui_manager.button_bar.add_button(
     'export_metamodel',
@@ -33,7 +33,7 @@ def pluginMain(interface):
     )
     interface.gui_manager.draw_menu.add_menu_item(
         'appearance',
-        lambda *a:test.show(),
+        lambda *a:appMng.show(),
         -1,
         'Appearance',
         False,

@@ -44,12 +44,6 @@ class LineAndArrowVBox(gtk.EventBox):
         self.show_all()
 
     def getApp(self):
-        app = ''
         for child in self.childObjects:
             if child.content != None:
-                app += child.content.getApp()
-        return app
-
-
-
-
+                yield child.content.getApp()

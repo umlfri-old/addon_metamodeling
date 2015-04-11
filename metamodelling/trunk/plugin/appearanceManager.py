@@ -2,6 +2,7 @@ import gtk
 import gtk.glade
 from lxml import etree
 import os
+import time
 import constants
 from appearance.simpleContent import SimpleContent
 from appearance.container import Container
@@ -76,8 +77,6 @@ class AppearanceManager:
             md.destroy()
             return
         self.selected = selected[0]
-        #print self.selected.object.__id__#GetUID()
-        #print self.selected.object.values['appearance']
         if self.selected.object.type.name != constants.ELEMENT_OBJECT_NAME:
             if self.selected.object.type.name != constants.CONNECTION_OBJECT_NAME:
                 md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, 'Appearance can be specified only for Elements and Connections.')
@@ -88,13 +87,15 @@ class AppearanceManager:
             self.init_Window()
             if self.selected.object.type.name == constants.CONNECTION_OBJECT_NAME:
                 self.initConnectionWin()
+            self.builder.buildApp(self)
             self.window.show()
             self.closed = False
         else:
             self.close(self.window)
             self.init_Window()
+            self.builder.buildApp(self)
             self.show()
-        self.builder.buildApp(self)
+        self.clearProperties()
 
     def initConnectionWin(self):
         self.wTree.get_widget("vbox1").remove(self.wTree.get_widget("scrolledwindow1"))
@@ -104,11 +105,9 @@ class AppearanceManager:
         sw.add_with_viewport(LineAndArrowVBox(gtk.VBox(), self, None))
         self.notebook.append_page(sw, gtk.Label('Line and arrow'))
 
-        #sw = gtk.ScrolledWindow()
         sw = LabelScrolledWindow()
         sw.add_with_viewport(SimpleContent(None,self))
         self.notebook.append_page(sw, gtk.Label('+ Label'))
-
 
         sw = gtk.ScrolledWindow()
         sw.add_with_viewport(self.notebook)
@@ -118,8 +117,7 @@ class AppearanceManager:
         x,y = self.window.get_size()
         self.hideButtons()
         self.window.resize(x,y)
-        self.notebookHandler = self.notebook.connect('switch-page', self.switchPage)
-
+        self.notebook.connect('focus-in-event', self.showNotebookPage)
         self.showConnectionButtons()
 
     def printChild(self,child):
@@ -247,7 +245,6 @@ class AppearanceManager:
     def clearProperties(self):
         if self.lastHighligted:
             self.lastHighligted.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("black"))
-        self.wTree.get_widget("label_name").set_text('')
         box = self.wTree.get_widget('vbox_properties')
         for w in box.children():
             box.remove(w)
@@ -270,6 +267,8 @@ class AppearanceManager:
     def windowResized(self, widget):
         if self.rootObject:
             self.redraw(self.rootObject)
+        if self.notebook:
+            self.notebook.queue_draw()
 
     def redraw(self, node):
         if node:
@@ -318,26 +317,6 @@ class AppearanceManager:
         self.wTree.get_widget("button_text_box").show()
         self.wTree.get_widget("label7").show()
 
-    def switchPage(self, notebook, par1, page_num):
-        self.clearProperties()
-        label = self.notebook.get_tab_label_text(self.notebook.get_nth_page(page_num))
-        if label == '+ Label':
-            self.notebook.set_tab_label_text(self.notebook.get_nth_page(page_num),'Label')
-            sw = LabelScrolledWindow()
-            sw.add_with_viewport(SimpleContent(None,self))
-            self.notebook.append_page(sw, gtk.Label('+ Label'))
-            self.notebook.show_all()
-            self.hideConnectionButtons()
-            self.showElementButtons()
-            self.showLabelProp(page_num)
-        elif label == 'Label':
-            self.hideConnectionButtons()
-            self.showElementButtons()
-            self.showLabelProp(page_num)
-        elif label == 'Line and arrow':
-            self.hideButtons()
-            self.showConnectionButtons()
-
     def showLabelProp(self, page_num):
         self.clearProperties()
         labelScrolledWindow = self.notebook.get_nth_page(page_num)
@@ -361,28 +340,69 @@ class AppearanceManager:
         dialog = gtk.MessageDialog(None,0,gtk.MESSAGE_QUESTION,gtk.BUTTONS_YES_NO,'Delete label with whole content?')
         response = dialog.run()
         if response == gtk.RESPONSE_YES:
-            self.notebook.disconnect(self.notebookHandler)
             self.notebook.remove_page(self.notebook.get_current_page())
             self.notebook.set_current_page(0)
-            self.notebookHandler = self.notebook.connect('switch-page', self.switchPage)
             self.clearProperties()
+            self.hideButtons()
+            self.showConnectionButtons()
         dialog.destroy()
 
     def saveApp(self, widget):
-        self.app = '<Appearance>'
+        self.app = etree.Element('Appearance')
         if self.selected.object.type.name == constants.ELEMENT_OBJECT_NAME:
             if self.rootObject != None:
-                self.app += self.rootObject.getApp()
+                self.app.append(self.rootObject.getApp())
         if self.selected.object.type.name == constants.CONNECTION_OBJECT_NAME:
             box = self.notebook.get_nth_page(0).get_child().get_child()
-            self.app += box.getApp()
+            for ele in box.getApp():
+                self.app.append(ele)
             for i in range(1, self.notebook.get_n_pages()-1):
-                position = self.notebook.get_nth_page(i).getPosition()#position.get_active_text()
-                self.app += '<Label position="' + position + '" >'
+                position = self.notebook.get_nth_page(i).getPosition()
+                label = etree.Element('Label')
+                label.attrib['position'] = position
                 if self.notebook.get_nth_page(i).get_child().get_child().content != None:
-                    self.app +=  self.notebook.get_nth_page(i).get_child().get_child().content.getApp()
-                self.app += '</Label>'
-        self.app += '</Appearance>'
-        self.selected.object.values['appearance'] = self.app
-        print self.selected.object.values['appearance']
+                    label.append(self.notebook.get_nth_page(i).get_child().get_child().content.getApp())
+                self.app.append(label)#self.app += '</Label>'
+        self.selected.object.values['appearance'] = etree.tostring(self.app, pretty_print=True)
         self.close(None)
+
+    def showNotebookPage(self, widget, w):
+        self.clearProperties()
+        currentPage = self.notebook.get_current_page()
+        label = self.notebook.get_tab_label_text(self.notebook.get_nth_page(currentPage))
+        if label == '+ Label':
+            self.notebook.set_tab_label_text(self.notebook.get_nth_page(currentPage),'Label')
+            sw = LabelScrolledWindow()
+            sw.add_with_viewport(SimpleContent(None,self))
+            self.notebook.append_page(sw, gtk.Label('+ Label'))
+            self.notebook.show_all()
+            self.hideConnectionButtons()
+            self.showElementButtons()
+            self.showLabelProp(currentPage)
+        elif label == 'Label':
+            self.hideConnectionButtons()
+            self.showElementButtons()
+            self.showLabelProp(currentPage)
+        elif label == 'Line and arrow':
+            self.hideButtons()
+            self.showConnectionButtons()
+        if self.lastHighligted:
+            self.lastHighligted.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("black"))
+            self.lastHighligted = None
+        self.wTree.get_widget('button_save').grab_focus()
+
+        container = self.notebook.get_nth_page(currentPage).get_child().get_child()
+        if currentPage == 0:
+            self.searchForSwitch(container)
+        else:
+            self.searchForSwitch(container.content)
+
+    def searchForSwitch(self, node):
+        if node:
+            if type(node).__name__ == 'Switch':
+                self.switchList.append(node)
+            try:
+                for child in node.childObjects:
+                    self.searchForSwitch(child.content)
+            except AttributeError:
+                pass

@@ -24,6 +24,7 @@ class AppBuilder():
         self.elementStore = []  #to store align, shadow and use them later on visual element
 
     def buildApp(self, manager):
+        manager.switchList = []
         try:
             root = etree.fromstring(manager.selected.object.values['appearance'])
             self.manager = manager
@@ -37,11 +38,8 @@ class AppBuilder():
                     widget.add_Content(content)
                     widget.show_all()
             if self.manager.selected.object.type.name == constants.CONNECTION_OBJECT_NAME:
-                #self.lines = []
                 self.addLineAndArrowContent(root)
                 self.addLabelContent(root)
-                #for line in self.lines:
-                #    line.exposeLine(line.drawArea, None)
         except etree.XMLSyntaxError:
             pass
 
@@ -78,10 +76,8 @@ class AppBuilder():
             content = self.textBoxBuilder(element, parent)
         elif element.tag == 'ConnectionLine':
             content = self.connectionLineBuilder(element, parent)
-            #self.lines.append(content)
         elif element.tag == 'ConnectionArrow':
             content = self.connectionArrowBuilder(element, parent)
-
         return content
 
     def containerBuilder(self, element, parent):
@@ -167,6 +163,7 @@ class AppBuilder():
         collection = element.get('collection')
         if collection != '':
             loop.selectedLoop = collection
+        loop.showProperties(None, None)
         for child in element:
             content = self.elementChooser(child, loop)
             widget = loop.box.get_children()[-1]
@@ -207,7 +204,6 @@ class AppBuilder():
             prop.size.set_active(1)
         else:
             prop.size.set_active(0)
-        align = element.get('align')
         if element.get('align'):
             prop.align.setAlign(element.get('align'))
         for child in element:
@@ -253,9 +249,8 @@ class AppBuilder():
         if bot:
             rectangle.botSide.setSide(bot)
         for ele in self.elementStore:
-            if ele.tag == 'Shadow':
-                rectangle.shadow.setShadow(ele)
-                self.elementStore.remove(ele)
+            if ele[0] == element and ele[1].tag == 'Shadow':
+                rectangle.shadow.setShadow(ele[1])
         for child in element:
             content = self.elementChooser(child, rectangle)
             widget = rectangle.box.get_children()[-1]
@@ -389,6 +384,3 @@ class AppBuilder():
                     self.removeLabelAndSignals(widget)
                     widget.add_Content(content)
         self.manager.notebook.show_all()
-
-
-

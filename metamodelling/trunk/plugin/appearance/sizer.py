@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from align import Align
@@ -177,27 +178,26 @@ class Sizer(gtk.EventBox):
         return True
 
     def getApp(self):
-        app = '<Sizer '
+        app = etree.Element('Sizer')
         if self.minWidthSpin.get_value() > 0:
-            app += 'minwidth="' + str(int(self.minWidthSpin.get_value())) + '" '
+            app.attrib['minwidth'] = str(int(self.minWidthSpin.get_value()))
         if self.minHeightSpin.get_value() > 0:
-            app += 'minheight="' + str(int(self.minHeightSpin.get_value())) + '" '
+            app.attrib['minheight'] = str(int(self.minHeightSpin.get_value()))
         if self.widthSpin.get_value() > 0:
-            app += 'width="' + str(int(self.widthSpin.get_value())) + '" '
+            app.attrib['width'] = str(int(self.widthSpin.get_value()))
         if self.heightSpin.get_value() > 0:
-            app += 'height="' + str(int(self.heightSpin.get_value())) + '" '
+            app.attrib['height'] = str(int(self.heightSpin.get_value()))
         if self.maxWidthSpin.get_value() > 0:
-            app += 'maxwidth="' + str(int(self.maxWidthSpin.get_value())) + '" '
+            app.attrib['maxwidth'] = str(int(self.maxWidthSpin.get_value()))
         if self.maxHeightSpin.get_value() > 0:
-            app += 'maxheight="' + str(int(self.maxHeightSpin.get_value())) + '" '
-        app += '>'
+            app.attrib['maxheight'] = str(int(self.maxHeightSpin.get_value()))
         for child in self.childObjects:
             if child.content:
-                app += child.content.getApp()
-        return app+' </Sizer>'
+                app.append(child.content.getApp())
+        return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         minwidth = element.get('minwidth')
         minheight = element.get('minheight')
         width = element.get('width')

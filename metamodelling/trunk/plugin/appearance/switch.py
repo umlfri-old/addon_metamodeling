@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from expand import Expand
@@ -7,6 +8,7 @@ from colorChooserButton import ColorChooserButton
 from pythonValue import PythonValue
 from elementValue import ElementValue
 from shadow import Shadow
+from valueValidator import ValueValidator
 import pango
 import constants
 
@@ -67,7 +69,8 @@ class Switch(gtk.EventBox):
 
         sc = SimpleContent(self,manager)
         self.notebook = gtk.Notebook()
-        self.notebook.connect('switch-page', self.switchPage)
+        #self.notebook.connect('switch-page', self.switchPage)
+        self.notebook.connect('focus-in-event', self.showProperties)
         self.notebook.append_page(sc, gtk.Label('Case'))
         self.box.pack_start(self.notebook)
         self.childObjects.append(sc)
@@ -96,6 +99,10 @@ class Switch(gtk.EventBox):
             self.addCase(None)
 
     def showProperties(self, widget, w):
+        if self in self.manager.switchList:
+            self.manager.wTree.get_widget('button_save').grab_focus()
+            self.manager.switchList = []
+            return
         if self.manager.lastHighligted:
             self.manager.lastHighligted.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("black"))
         self.manager.lastHighligted = self
@@ -115,9 +122,11 @@ class Switch(gtk.EventBox):
 
         label = gtk.Label('Case condition')
         label.set_alignment(0.01, 0.5)
-
+        vbox = gtk.HBox()
+        vbox.pack_start(label,False)
+        vbox.pack_end(ElementValue(self,'Case value'),False)
+        box.pack_start(vbox,False)
         self.conditionValue.set_text(self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page())))
-        box.pack_start(label,False)
         box.pack_start(self.conditionValue,False)
         box.pack_start(gtk.Label(' '),False)
 
@@ -135,14 +144,10 @@ class Switch(gtk.EventBox):
             box.pack_start(self.expand, False)
             box.pack_start(gtk.Label(' '),False)
         box.show_all()
+        self.manager.wTree.get_widget('button_save').grab_focus()
 
     def add_New_Simple_Content(self):
         pass
-        #if len(self.childObjects) == 0:
-        #    sc = SimpleContent(self,self.manager)
-        #    self.box.pack_start(sc)
-        #    self.childObjects.append(sc)
-        #    self.show_all()
 
     def motion_cb(self, wid, context, x, y, time):
         context.drag_status(gtk.gdk.ACTION_COPY, time)
@@ -161,13 +166,13 @@ class Switch(gtk.EventBox):
             self.parentContainer.reorder(newPosition, source)
         return True
 
-    def setElementValue(self, attrib, value):
-        if attrib == 'Fill color':
-            self.fillColorButton.color = '#'+value
-            self.fillColorButton.set_label(self.fillColorButton.color)
-        elif attrib == 'Border color':
-            self.borderColorButton.color = '#'+value
-            self.borderColorButton.set_label(self.borderColorButton.color)
+    #def setElementValue(self, attrib, value):
+    #    if attrib == 'Fill color':
+    #        self.fillColorButton.color = '#'+value
+    #        self.fillColorButton.set_label(self.fillColorButton.color)
+    #    elif attrib == 'Border color':
+    #        self.borderColorButton.color = '#'+value
+    #        self.borderColorButton.set_label(self.borderColorButton.color)
 
     def colorChanged(self, newColor, attrib):
         pass
@@ -178,6 +183,7 @@ class Switch(gtk.EventBox):
         self.notebook.show_all()
         self.childObjects.append(sc)
         self.buttonDelete.set_sensitive(True)
+        self.notebook.set_page(-1)
 
     def deleteCase(self, w):
         if self.notebook.get_n_pages() > 1:
@@ -191,35 +197,45 @@ class Switch(gtk.EventBox):
             self.buttonDelete.set_sensitive(False)
 
     def setElementValue(self, attrib, value):
-        self.switchValue.set_text(value)
+        if attrib == 'Switch value':
+            self.switchValue.set_text(value)
+        elif attrib == 'Case value':
+            self.conditionValue.set_text(value)
 
     def switchPage(self, notebook, par1, page_num):
+        print notebook, par1
         self.conditionValue.disconnect(self.signalHandler)
+        self.showProperties(None, None)
         self.conditionValue.set_text(self.notebook.get_tab_label_text(self.notebook.get_nth_page(page_num)))
         self.signalHandler = self.conditionValue.connect('changed', self.conditionChanged)
-        self.showProperties(None, None)
+
 
     def conditionChanged(self, w):
         self.notebook.set_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()),self.conditionValue.get_text())
 
     def getApp(self):
-        app = '<Switch value="' + self.switchValue.get_text() + '">'
+        app = etree.Element('Switch')
+        app.attrib['value'] = self.switchValue.get_text()
         for page in self.notebook:
-            app += '<Case condition="' + self.notebook.get_tab_label_text(page) + '">'
+            case = etree.Element('Case')
+            case.attrib['condition'] = self.notebook.get_tab_label_text(page)
             if page.content != None:
-                app += page.content.getApp()
-            app += '</Case>'
-        app += '</Switch>'
+                case.append(page.content.getApp())
+            app.append(case)
         return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         value = element.get('value')
         if value == '' or not value.strip():
             return False, 'Missing value in switch.'
+        if not ValueValidator.validate(value, dataElement):
+            return False, 'Unknown element attribute for switch value: ' + value
         for child in element.iter('Case'):
             if child.getparent() == element:
                 caseValue = child.get('condition')
+                if not ValueValidator.validate(caseValue, dataElement):
+                    return False, 'Unknown element attribute for case value: ' + caseValue
                 if caseValue == '' or not caseValue.strip():
                     return False, 'Missing case value in switch.'
                 if child.getchildren() == []:

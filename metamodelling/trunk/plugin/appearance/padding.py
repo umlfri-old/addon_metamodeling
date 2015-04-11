@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from align import Align
@@ -178,28 +179,26 @@ class Padding(gtk.EventBox):
         return True
 
     def getApp(self):
-        app = '<Padding '
+        app = etree.Element('Padding')
         if 0 == self.paddingSpin.get_value() == self.leftSpin.get_value() == self.rightSpin.get_value() == self.topSpin.get_value() == self.bottomSpin.get_value():
-            app += 'padding="0"'
+            app.attrib['padding'] = '0'
         if self.paddingSpin.get_value() != 0:
-            app += 'padding="' + str(int(self.paddingSpin.get_value())) + '">'
+            app.attrib['padding'] = str(int(self.paddingSpin.get_value()))
         else:
             if self.leftSpin.get_value() != 0:
-                app += 'left="' + str(int(self.leftSpin.get_value())) + '" '
+                app.attrib['left'] = str(int(self.leftSpin.get_value()))
             if self.rightSpin.get_value() != 0:
-                app += 'right="' + str(int(self.rightSpin.get_value())) + '" '
+                app.attrib['right'] = str(int(self.rightSpin.get_value()))
             if self.topSpin.get_value() != 0:
-                app += 'top="' + str(int(self.topSpin.get_value())) + '" '
+                app.attrib['top'] = str(int(self.topSpin.get_value()))
             if self.bottomSpin.get_value() != 0:
-                app += 'bottom="' + str(int(self.bottomSpin.get_value())) + '" '
-            app += '>'
+                app.attrib['bottom'] = str(int(self.bottomSpin.get_value()))
         if self.childObjects[0].content != None:
-            app += self.childObjects[0].content.getApp()
-        app += '</Padding>'
+            app.append(self.childObjects[0].content.getApp())
         return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         padding = element.get('padding')
         if padding == '0':
             return False, 'Padding values not set. Set some or delete padding.'

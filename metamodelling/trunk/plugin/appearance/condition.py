@@ -1,9 +1,11 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from expand import Expand
 from elementValue import ElementValue
+from valueValidator import ValueValidator
 
 class Condition(gtk.EventBox):
     def __init__(self, name, box, manager, parent):
@@ -129,17 +131,19 @@ class Condition(gtk.EventBox):
         self.condition.set_text(value)
 
     def getApp(self):
-        app = '<Condition condition="' + self.condition.get_text() + '">'
+        app = etree.Element('Condition')
+        app.attrib['condition'] = self.condition.get_text()
         if self.childObjects[0].content != None:
-            app += self.childObjects[0].content.getApp()
-        app += '</Condition>'
+            app.append(self.childObjects[0].content.getApp())
         return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         value = element.get('condition')
         if value == '' or not value.strip():
             return False, 'Missing value in condition. Add some or delete condition.'
+        if not ValueValidator.validate(value, dataElement):
+            return False, 'Unknown element attribute for condition value: ' + value
         if element.getchildren() == []:
             return False, 'Missing content for condition "' + value + '". Add some or delete condition.'
         return True, None

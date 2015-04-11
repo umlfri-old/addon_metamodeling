@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from align import Align
@@ -92,6 +93,7 @@ class Container(gtk.EventBox):
             box.pack_start(gtk.Label(' '),False)
         box.pack_start(self.align,False)
         box.show_all()
+        #self.manager.wTree.get_widget('button_save').grab_focus()
 
     def add_New_Simple_Content(self):
         sc = SimpleContent(self,self.manager)
@@ -179,32 +181,32 @@ class Container(gtk.EventBox):
 
     def getApp(self):
         if self.isHBox():
-            app = '<VBox '
+            app = etree.Element('VBox')
         else:
-            app = '<HBox '
-        app += 'expand="'
+            app = etree.Element('HBox')
         i = 0
+        expand =''
         for child in self.childObjects:
             if child.content:
                 if type(child.content).__name__ != 'Line':
                     if child.content.expand.isTrue():
-                        app += str(i)
-                        app += ' '
+                        if expand != '':
+                            expand += ' '
+                        expand += str(i)
             i += 1
-        app += '" >'
+        if expand != '':
+            app.attrib['expand'] = expand
         for child in self.childObjects:
             if child.content:
-                app += child.content.getApp()
-        if self.isHBox():
-            app += ' </VBox>'
-        else:
-            app += ' </HBox>'
+                app.append(child.content.getApp())
         if self.align.isAlignSet():
-            app = '<Align ' + self.align.getXMLFormat() + '>' + app + '</Align>'
+            align = self.align.getXMLFormat()
+            align.append(app)
+            return align
         return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         childs = []
         for child in element.iter():
             if child != element:

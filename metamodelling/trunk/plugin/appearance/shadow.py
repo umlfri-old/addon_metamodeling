@@ -1,8 +1,10 @@
 import gtk
+from lxml import etree
 from colors2 import colors
 from pythonValue import PythonValue
 from elementValue import ElementValue
 from colorChooserButton import ColorChooserButton
+from valueValidator import ValueValidator
 
 class Shadow(gtk.VBox):
     def __init__(self, widget):
@@ -47,11 +49,14 @@ class Shadow(gtk.VBox):
         pass
 
     def getXMLFormat(self):
+        shadow = etree.Element('Shadow')
+        shadow.attrib['padding'] = str(int(self.padding))
         if self.buttonColor.color == None:
             color = ''
         else:
-            color = self.buttonColor.color
-        return 'padding="' + str(int(self.padding)) + '" color="' + color + '"'
+            color = self.buttonColor.getColor()
+        shadow.attrib['color'] = color
+        return shadow
 
     def setShadow(self, element):
         padding = element.get('padding')
@@ -62,9 +67,12 @@ class Shadow(gtk.VBox):
             self.buttonColor.setColor(color)
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         padding = int(element.get('padding'))
         color = element.get('color')
+        if color:
+            if not ValueValidator.validate(color, dataElement):
+                return False, 'Unknown element attribute for shadow color: ' + color
         if padding > 0 and color == '':
             child = None
             for c in element:

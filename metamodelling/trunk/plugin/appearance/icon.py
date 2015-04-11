@@ -1,5 +1,6 @@
 import gtk
 import os
+from lxml import etree
 from dragSourceEventBox import DragSourceEventBox
 from align import Align
 from shadow import Shadow
@@ -121,15 +122,20 @@ class Icon(DragSourceEventBox):
         filename = self.path
         if filename == None:
             filename = ''
-        app = '<Icon filename="'+filename+'" />'
+        app = etree.Element('Icon')
+        app.attrib['filename'] = filename
         if self.shadow.padding > 0 or self.shadow.buttonColor.color:
-            app = '<Shadow ' + self.shadow.getXMLFormat() + '>' + app + '</Shadow>'
+            shadow = self.shadow.getXMLFormat()
+            shadow.append(app)
+            app = shadow
         if self.align.isAlignSet():
-            app = '<Align ' + self.align.getXMLFormat() + '>' + app + '</Align>'
+            align = self.align.getXMLFormat()
+            align.append(app)
+            app = align
         return app
 
     @staticmethod
-    def validate(element):
+    def validate(element, dataElement):
         if element.get('filename') == '':
             return False, 'Missing filename for icon. Choose some or delete icon.'
         return True, None
