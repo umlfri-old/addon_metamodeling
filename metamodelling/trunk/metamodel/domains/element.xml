@@ -15,7 +15,7 @@
 			<Value>Top</Value>
 		</Enum>
 	</Attribute>
-    <Attribute id="identify" name="Identify" >
+    <Attribute id="identify" name="Identity" >
 		<Str/>
 	</Attribute>
 	<Attribute id="appearance" name="Appearance" hidden="true">

@@ -5,6 +5,7 @@ from simpleContent import SimpleContent
 from dragSourceEventBox import DragSourceEventBox
 from align import Align
 from expand import Expand
+from parentButton import ParentButton
 
 class Container(gtk.EventBox):
     def __init__(self, name, box, manager, parent):
@@ -92,8 +93,9 @@ class Container(gtk.EventBox):
             box.pack_start(self.expand, False)
             box.pack_start(gtk.Label(' '),False)
         box.pack_start(self.align,False)
+        #box.pack_start(gtk.Label(' '),False)
+        #box.pack_start(ParentButton(self),False)
         box.show_all()
-        #self.manager.wTree.get_widget('button_save').grab_focus()
 
     def add_New_Simple_Content(self):
         sc = SimpleContent(self,self.manager)
@@ -215,3 +217,23 @@ class Container(gtk.EventBox):
             return False, 'Missing content in '+ element.tag + '. Add some or delete ' + element.tag + '.'
         else:
             return True, None
+
+    '''def addWidget(self, widget):
+        sc = self.box.get_children()[0]
+        sc.remove(sc.get_Label())
+        sc.disconnect(sc.enterNotifyHandler)
+        sc.disconnect(sc.buttonReleaseHandler)
+        sc.content = widget
+        #widget.unparent()
+        sc.add(widget)
+        #self.childObjects.append(widget)
+        self.add_New_Simple_Content()
+
+    def changeParent(self, parentChild, child):
+        for i in range(0, len(self.childObjects)):
+            print self.childObjects[i].content, child
+            if self.childObjects[i].content == child:
+                self.childObjects[i].remove(child)
+                self.childObjects[i].add(parentChild)
+                self.childObjects[i].content == parentChild
+                child.parentContainer = parentChild'''

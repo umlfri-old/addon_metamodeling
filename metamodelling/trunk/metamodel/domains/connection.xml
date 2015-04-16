@@ -5,7 +5,7 @@
 	<Attribute id="icon" name="Icon" hidden="true">
 		<Str default="icons/connection.png"></Str>
 	</Attribute>
-    <Attribute id="identify" name="Identify" >
+    <Attribute id="identify" name="Identity" >
 		<Str/>
 	</Attribute>
 	<Attribute id="appearance" name="Appearance" hidden="true">
