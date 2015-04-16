@@ -3,9 +3,10 @@
     <Domain id="link" identity="name"/>
     
     <Appearance>
-        <ConnectionLine style="dot" color="green"/>
+        <ConnectionLine style="solid" color="green"/>
+        <ConnectionArrow index="-1" style="simple_arrow" color="green"/>
         <Condition condition="#self.withMe">
-            <ConnectionLine style="solid" color="green"/>
+            <ConnectionArrow index="0" style="simple_arrow" color="green"/>
         </Condition>
         <Label position="center">
             <HBox>

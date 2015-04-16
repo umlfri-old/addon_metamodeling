@@ -140,7 +140,8 @@ class AppearanceManager:
         self.default_color = None
         self.lastHighligted = None
         vbox = self.wTree.get_widget('vboxContent')
-        vbox.pack_start(SimpleContent(None,self))
+        self.sc = SimpleContent(None,self)
+        vbox.pack_start(self.sc)
         vbox.show_all()
         self.rootObject = None
 
@@ -232,13 +233,15 @@ class AppearanceManager:
 
     def printNode(self, node):
         if node:
-            print node.containerName
+            print node.containerName, node
+            for x in node.childObjects:
+                print '    ',x.content
             for child in node.childObjects:
                 self.printNode(child.content)
 
     def prehliadka(self, widget):
-        for x in self.rootObject.childObjects:
-            print x.content
+        #for x in self.rootObject.childObjects:
+        #    print x.content
         if self.rootObject != None:
             self.printNode(self.rootObject)
 
@@ -260,7 +263,8 @@ class AppearanceManager:
             vbox = self.wTree.get_widget('vboxContent')
             for c in vbox.children():
                 vbox.remove(c)
-            vbox.pack_start(SimpleContent(None,self))
+            self.sc = SimpleContent(None,self)
+            vbox.pack_start(self.sc)
             vbox.show_all()
         self.clearProperties()
 
@@ -409,3 +413,60 @@ class AppearanceManager:
                     self.searchForSwitch(child.content)
             except AttributeError:
                 pass
+
+    def getVisibleContainers(self):
+        list = []
+        if self.wTree.get_widget('button_horizontal_box').get_visible():
+            list.append('Horizontal box')
+        if self.wTree.get_widget('button_vertical_box').get_visible():
+            list.append('Vertical box')
+        if self.wTree.get_widget('button_switch').get_visible():
+            list.append('Switch')
+        if self.wTree.get_widget('button_condition').get_visible():
+            list.append('Condition')
+        if self.wTree.get_widget('button_diamond').get_visible():
+            list.append('Diamond')
+        if self.wTree.get_widget('button_ellipse').get_visible():
+            list.append('Ellipse')
+        if self.wTree.get_widget('button_loop').get_visible():
+            list.append('Loop')
+        if self.wTree.get_widget('button_padding').get_visible():
+            list.append('Padding')
+        if self.wTree.get_widget('button_proportional').get_visible():
+            list.append('Proportional')
+        if self.wTree.get_widget('button_rectangle').get_visible():
+            list.append('Rectangle')
+        if self.wTree.get_widget('button_sizer').get_visible():
+            list.append('Sizer')
+        return list
+
+    '''def addParent(self, widget, parentName):
+        if parentName == 'Horizontal box':
+            parent = Container(parentName, gtk.VBox(), self, widget.parentContainer)
+        temp = widget.parentContainer
+
+        if widget.parentContainer:
+            for i in range(0, len(widget.parentContainer.childObjects)):
+                if widget.parentContainer.childObjects[i].content == widget:
+                    widget.parentContainer.childObjects[i].remove(widget)
+                    widget.parentContainer.childObjects[i].content = parent
+                    widget.parentContainer.childObjects[i].add(parent)
+        else:
+            self.rootObject = parent
+            print self.sc.content, widget
+            self.sc.remove(widget)
+            self.sc.content = parent
+            self.sc.add(parent)
+        parent.addWidget(widget)
+        #temp.addWidget(parent)
+        #widget.parentContainer = parent
+        if temp:
+            temp.changeParent(parent, widget)
+        parent.showProperties(None, None)
+        #temp.changePacking()
+
+        #temp.show_all()
+        #parent.show_all()
+        #widget.show_all()
+
+        self.prehliadka(None)'''
