@@ -33,8 +33,6 @@ class IconChooser:
             icon = os.path.split(os.path.realpath(chooser.get_filename()))[1]
             path = os.path.split(os.path.realpath(__file__))[0]
             path = path.replace('plugin', 'metamodel/userIcons/')
-            print chooser.get_filename()
-            print path
             try:
                 shutil.copy(chooser.get_filename(), path)
             except shutil.Error: #same file exception

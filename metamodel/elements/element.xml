@@ -33,7 +33,7 @@
                                     <VBox>
                                         <TextBox text=" = " color="#cfg.Styles.Element.TextColor" />
                                         <TextBox text="#default" color="#cfg.Styles.Element.TextColor" />
-                                        </VBox>
+                                    </VBox>
                                 </Condition>
                             </VBox>
                         </Padding>
