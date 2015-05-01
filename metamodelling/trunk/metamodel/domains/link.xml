@@ -1,5 +1,5 @@
 <Domain id="link" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" >
-    <Attribute id="withMe" name="Identity relationship" >
+    <Attribute id="withMe" name="Bidirectional" >
 		<Bool default="False"/>
 	</Attribute>
     <Attribute id="allowRecursive" name="Recursive" >
