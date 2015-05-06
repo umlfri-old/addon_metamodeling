@@ -11,10 +11,11 @@ from shadow import Shadow
 from valueValidator import ValueValidator
 import pango
 import constants
+from baseElement import BaseElement
 
-class Switch(gtk.EventBox):
+class Switch(BaseElement):
     def __init__(self, name, box, manager, parent):
-        gtk.EventBox.__init__(self)
+        BaseElement.__init__(self)
         self.manager = manager
         self.containerName = name
         self.box = box
@@ -148,31 +149,6 @@ class Switch(gtk.EventBox):
 
     def add_New_Simple_Content(self):
         pass
-
-    def motion_cb(self, wid, context, x, y, time):
-        context.drag_status(gtk.gdk.ACTION_COPY, time)
-        return True
-
-    def drop_cb(self, wid, context, x, y, time):
-        tempX = None
-        source = context.get_source_widget().getParent()
-        for child in self.parentContainer.childObjects:
-            if child.content == source:
-                for x in self.parentContainer.childObjects:
-                    if x.content == self:
-                        tempX = x
-        if tempX:
-            newPosition = self.parentContainer.childObjects.index(tempX)
-            self.parentContainer.reorder(newPosition, source)
-        return True
-
-    #def setElementValue(self, attrib, value):
-    #    if attrib == 'Fill color':
-    #        self.fillColorButton.color = '#'+value
-    #        self.fillColorButton.set_label(self.fillColorButton.color)
-    #    elif attrib == 'Border color':
-    #        self.borderColorButton.color = '#'+value
-    #        self.borderColorButton.set_label(self.borderColorButton.color)
 
     def colorChanged(self, newColor, attrib):
         pass

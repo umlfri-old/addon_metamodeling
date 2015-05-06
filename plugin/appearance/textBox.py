@@ -16,10 +16,7 @@ class TextBox(DragSourceEventBox):
         DragSourceEventBox.__init__(self, self)
         self.manager = manager
         self.parentContainer = parent
-        #self.color = None
         self.font = gtk.FontSelection()
-        #self.font.set_font_name('sans 12')
-        #self.font.set_font_name('Serif Bold Italic 12 ')
         self.shadow = Shadow(self)
         self.expand = None
         if type(self.parentContainer).__name__ == 'Container':
@@ -27,9 +24,6 @@ class TextBox(DragSourceEventBox):
         self.align = Align(self)
 
         self.buttonTextColor = ColorChooserButton(self, 'Select text color')
-        #self.buttonTextColor = gtk.Button(' ')
-        #self.buttonTextColor.set_alignment(0.01, 0.5)
-        #self.buttonTextColor.connect('clicked', self.chooseTextColor)
 
         self.textEntry = gtk.Entry()
         self.textEntry.connect('changed', self.textEdited)

@@ -6,10 +6,11 @@ from dragSourceEventBox import DragSourceEventBox
 from align import Align
 from expand import Expand
 from parentButton import ParentButton
+from baseElement import BaseElement
 
-class Container(gtk.EventBox):
+class Container(BaseElement):
     def __init__(self, name, box, manager, parent):
-        gtk.EventBox.__init__(self)
+        BaseElement.__init__(self)
         self.manager = manager
         self.containerName = name
         self.box = box
@@ -122,23 +123,6 @@ class Container(gtk.EventBox):
                 self.box.pack_start(tempChild)
             self.box.pack_start(tempList[i])
         self.changePacking()
-
-    def motion_cb(self, wid, context, x, y, time):
-        context.drag_status(gtk.gdk.ACTION_COPY, time)
-        return True
-
-    def drop_cb(self, wid, context, x, y, time):
-        tempX = None
-        source = context.get_source_widget().getParent()
-        for child in self.parentContainer.childObjects:
-            if child.content == source:
-                for x in self.parentContainer.childObjects:
-                    if x.content == self:
-                        tempX = x
-        if tempX:
-            newPosition = self.parentContainer.childObjects.index(tempX)
-            self.parentContainer.reorder(newPosition, source)
-        return True
 
     def isHBox(self):
         if type(self.box).__name__ == 'HBox':
