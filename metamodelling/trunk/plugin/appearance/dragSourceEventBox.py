@@ -1,8 +1,9 @@
 import gtk
+from baseElement import BaseElement
 
-class DragSourceEventBox(gtk.EventBox):
+class DragSourceEventBox(BaseElement):
     def __init__(self, parent):
-        gtk.EventBox.__init__(self)
+        BaseElement.__init__(self)
         self.parentWidget = parent
 
     def getParent(self):

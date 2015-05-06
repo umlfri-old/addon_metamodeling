@@ -95,23 +95,6 @@ class Icon(DragSourceEventBox):
                 self.manager.clearProperties()
         dialog.destroy()
 
-    def motion_cb(self, wid, context, x, y, time):
-        context.drag_status(gtk.gdk.ACTION_COPY, time)
-        return True
-
-    def drop_cb(self, wid, context, x, y, time):
-        tempX = None
-        source = context.get_source_widget().getParent()
-        for child in self.parentContainer.childObjects:
-            if child.content == source:
-                for x in self.parentContainer.childObjects:
-                    if x.content == self:
-                        tempX = x
-        if tempX:
-            newPosition = self.parentContainer.childObjects.index(tempX)
-            self.parentContainer.reorder(newPosition, source)
-        return True
-
     def xChanged(self):
         self.icon.set_alignment(self.align.xValue, self.align.yValue)
 
