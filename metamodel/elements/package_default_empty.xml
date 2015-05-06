@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ElementType id="Package_default_empty" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd">
+    <Icon path="icons/package_default.png" />
+    <Domain id="package_default_empty" identity="name" />
+    <Connections />
+    <Appearance>
+        <TextBox text="#self.name" />        
+    </Appearance>    
+</ElementType>

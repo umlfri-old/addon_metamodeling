@@ -1,0 +1,8 @@
+<Domain id="package_default_empty" xmlns="http://umlfri.kst.fri.uniza.sk/xmlschema/metamodel.xsd" >
+    <Attribute id="name" name="Name" >
+		<Str default="Project"/>
+	</Attribute>
+    <Attribute id="note" name="Note" >
+		<Text/>
+	</Attribute>
+</Domain>
